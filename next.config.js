@@ -12,7 +12,7 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        bufferutil: false,
+        'bufferutil': false,
         'utf-8-validate': false,
         fs: false,
         net: false,

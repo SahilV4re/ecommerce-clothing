@@ -9,7 +9,7 @@ import { Toaster } from '@/components/ui/sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Baygya - Premium Fashion Store',
+  title: 'UrbanAttire - Premium Fashion Store',
   description: 'Discover unique styles and trendy fashion for men, women, and kids',
 };
 

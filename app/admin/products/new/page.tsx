@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,6 +23,7 @@ export default function NewProductPage() {
   const { user, userRole } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -35,9 +36,46 @@ export default function NewProductPage() {
     featured: false,
   });
 
+  // Ensure we're on the client side before doing any redirects
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Handle authentication redirect after component mounts
+  useEffect(() => {
+    if (isClient && (!user || userRole !== 'admin')) {
+      router.push('/');
+    }
+  }, [isClient, user, userRole, router]);
+
+  // Don't render anything until we're on client side and have checked auth
+  if (!isClient) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardContent className="flex items-center justify-center p-8">
+              <div>Loading...</div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while redirecting unauthorized users
   if (!user || userRole !== 'admin') {
-    router.push('/');
-    return null;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardContent className="flex items-center justify-center p-8">
+              <div>Redirecting...</div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
