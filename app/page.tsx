@@ -124,16 +124,16 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" asChild>
-                  <Link href="/category/men">Shop Men's</Link>
+                  <Link href="/category/men">Shop Men&apos;s</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/category/women">Shop Women's</Link>
+                  <Link href="/category/women">Shop Women&apos;s</Link>
                 </Button>
               </div>
             </div>
             <div className="relative">
               <Image
-                src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
+                src="/hero1.jpg"
                 alt="Fashion Collection"
                 width={600}
                 height={400}
@@ -264,7 +264,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <blockquote className="italic text-muted-foreground mb-4">
-                    "{review.comment}"
+                    &quot;{review.comment}&quot;
                   </blockquote>
                   <cite className="font-semibold">{review.name}</cite>
                 </CardContent>
@@ -297,7 +297,7 @@ export default function HomePage() {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="text-2xl font-bold mb-4">baygya</h3>
+              <h3 className="text-2xl font-bold mb-4">UrbanAttire</h3>
               <p className="text-muted-foreground">
                 Your destination for trendy and comfortable fashion for all ages.
               </p>
@@ -305,9 +305,9 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4">Shop</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><Link href="/category/men" className="hover:text-foreground">Men's Fashion</Link></li>
-                <li><Link href="/category/women" className="hover:text-foreground">Women's Fashion</Link></li>
-                <li><Link href="/category/kids" className="hover:text-foreground">Kids' Fashion</Link></li>
+                <li><Link href="/category/men" className="hover:text-foreground">Men&apos;s Fashion</Link></li>
+                <li><Link href="/category/women" className="hover:text-foreground">Women&apos;s Fashion</Link></li>
+                <li><Link href="/category/kids" className="hover:text-foreground">Kid&apos;s Fashion</Link></li>
                 <li><Link href="/new-collections" className="hover:text-foreground">New Collections</Link></li>
               </ul>
             </div>
@@ -330,7 +330,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t pt-8 text-center text-muted-foreground">
-            <p>&copy; 2025 baygya. All rights reserved.</p>
+            <p>&copy; 2025 UrbanAttire. All rights reserved.</p>
           </div>
         </div>
       </footer>
