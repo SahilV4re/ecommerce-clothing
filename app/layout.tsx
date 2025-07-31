@@ -6,7 +6,7 @@ import { CartProvider } from '@/contexts/CartContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/sonner';
-import { Footer as CalendarFooter } from 'react-day-picker';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
