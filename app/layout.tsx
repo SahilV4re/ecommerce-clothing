@@ -4,7 +4,9 @@ import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/sonner';
+import { Footer as CalendarFooter } from 'react-day-picker';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,7 +27,9 @@ export default function RootLayout({
           <CartProvider>
             <Header />
             <main>{children}</main>
+            
             <Toaster />
+            <Footer />
           </CartProvider>
         </AuthProvider>
       </body>

@@ -75,7 +75,7 @@ export default function Header() {
             <Link href="/category/kids" className="hover:text-primary transition-colors">
               Kids
             </Link>
-            <Link href="/new-collections" className="hover:text-primary transition-colors">
+            <Link href="/new-collection" className="hover:text-primary transition-colors">
               New Collections
             </Link>
           </nav>

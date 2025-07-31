@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 
-function footer() {
+function Footer() {
   return (
     <div>
       <footer className="bg-background border-t py-12 px-4">
@@ -49,4 +49,4 @@ function footer() {
   )
 }
 
-export default footer
+export default Footer
