@@ -27,7 +27,7 @@ const heroSlides= [
     href: '/category/men',
   },
   {
-    image: 'https://i2.ppvise.site/gimg/fd69e12ef6.jpg',
+    image: 'https://i2.ppvise.site/gimg/b7452cec55.jpg',
     title: 'Own the Moment',
     subtitle: 'Curated for the fearless.',
     buttonText: 'Shop Women',
