@@ -210,10 +210,7 @@ export default function NewCollectionsPage() {
                   <CardContent className="py-4">
                     <h3 className="font-semibold text-lg text-gray-800">{product.name}</h3>
                     <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
-                    <div className="flex items-center mt-1 text-sm text-gray-500">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
-                      <span>{product.rating}</span>
-                    </div>
+                
                     <div className="mt-2 text-lg font-bold text-gray-900">
                       ₹{product.price}{' '}
                       {product.original_price && (
