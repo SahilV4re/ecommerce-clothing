@@ -23,7 +23,6 @@ interface Product {
   image_url: string;
   stock: number;
   featured: boolean;
-  rating: number;
 }
 
 const categories = ['All', 'Mens', 'Womens', 'Kids'];
@@ -69,7 +68,7 @@ export default function NewCollectionsPage() {
             image_url: item.image_url,
             stock: item.stock,
             featured: item.featured,
-            rating: item.rating || 0, // Default to 0 if rating is not present
+            // Default to 0 if rating is not present
           })) || []
         );
       }
