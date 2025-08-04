@@ -68,7 +68,6 @@ export default function NewCollectionsPage() {
             image_url: item.image_url,
             stock: item.stock,
             featured: item.featured,
-            // Default to 0 if rating is not present
           })) || []
         );
       }
@@ -85,7 +84,7 @@ export default function NewCollectionsPage() {
 
   const handleAddToCart = async (productId: number, title: string) => {
     try {
-      await addToCart(productId.toString()); // Convert to string to match CartContext expectation
+      await addToCart(productId.toString());
       toast({
         title: 'Added to Cart',
         description: `${title} has been added to your cart.`,
@@ -104,42 +103,42 @@ export default function NewCollectionsPage() {
   return (
     <div className="px-4 sm:px-6 md:px-10 py-12 max-w-8xl mx-auto bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-teal-500 to-red-400 rounded-3xl shadow-2xl p-8 md:p-12 mb-16 flex flex-col-reverse md:flex-row items-center gap-8 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-teal-500 to-red-400 rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 mb-16 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8 overflow-hidden">
         <motion.div
-          className="max-w-lg z-10"
+          className="max-w-lg text-center md:text-left z-10"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-white">
             Discover Fresh Styles
           </h1>
-          <p className="text-gray-100 mt-4 text-lg">
+          <p className="text-gray-100 mt-4 text-base sm:text-lg">
             Unveil our latest collection crafted for bold, everyday fashion.
           </p>
           <Button
-            className="mt-6 px-8 py-3 text-lg bg-white text-black hover:bg-white-400 transition-colors"
+            className="mt-6 px-6 py-2 text-base sm:text-lg bg-white text-black hover:bg-gray-200 transition-colors"
             asChild
           >
             <a href="#products">Shop Now</a>
           </Button>
         </motion.div>
         <motion.div
-          className="w-full pl-20 md:w-1/2"
-          initial={{ opacity: 0, scale: 0.8 }}
+          className="w-full "
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
         >
           <Image
             src="/hero.jpg"
             alt="New Collection"
-            width={600}
-            height={600}
-            className="object-cover rounded-lg"
+            width={400}
+            height={400}
+            className="object-cover md:object-fit rounded-lg w-full h-auto md:h-96"
             priority
           />
         </motion.div>
-        <div className="absolute inset-0 bg-black/20 z-0" />
+        <div className="absolute inset-0 bg-black/30 z-0" />
       </section>
 
       {/* Search & Filter */}
@@ -210,7 +209,6 @@ export default function NewCollectionsPage() {
                   <CardContent className="py-4">
                     <h3 className="font-semibold text-lg text-gray-800">{product.name}</h3>
                     <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
-                
                     <div className="mt-2 text-lg font-bold text-gray-900">
                       ₹{product.price}{' '}
                       {product.original_price && (
