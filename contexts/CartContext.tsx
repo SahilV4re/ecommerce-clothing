@@ -8,6 +8,8 @@ interface CartItem {
   id: string;
   product_id: string;
   quantity: number;
+  size?: string;
+  color?: string;
   product: {
     name: string;
     price: number;
@@ -19,7 +21,7 @@ interface CartItem {
 interface CartContextType {
   items: CartItem[];
   loading: boolean;
-  addToCart: (productId: string, quantity?: number) => Promise<void>;
+  addToCart: (productId: string, quantity?: number, size?: string, color?: string) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -52,6 +54,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         id,
         product_id,
         quantity,
+        size,
+        color,
         products (
           name,
           price,
@@ -72,11 +76,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   };
 
-  const addToCart = async (productId: string, quantity = 1) => {
+  const addToCart = async (productId: string, quantity = 1, size?: string, color?: string) => {
     if (!user) return;
 
-    // Check if item already exists in cart
-    const existingItem = items.find(item => item.product_id === productId);
+    // Check if item already exists in cart with the same size and color
+    const existingItem = items.find(item => 
+      item.product_id === productId && item.size === size && item.color === color
+    );
 
     if (existingItem) {
       await updateQuantity(existingItem.id, existingItem.quantity + quantity);
@@ -87,10 +93,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           user_id: user.id,
           product_id: productId,
           quantity,
+          size,
+          color,
         });
 
       if (error) {
         console.error('Error adding to cart:', error);
+        throw error; // Throw to be caught by the caller
       } else {
         await fetchCartItems();
       }
@@ -178,6 +187,3 @@ export function useCart() {
   }
   return context;
 }
-
-
-

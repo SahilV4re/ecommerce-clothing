@@ -25,7 +25,7 @@ interface Product {
   featured: boolean;
 }
 
-const categories = ['All', 'Mens', 'Womens', 'Kids'];
+const categories = ['All', 'men', 'women', 'kids'];
 
 export default function NewCollectionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -131,7 +131,7 @@ export default function NewCollectionsPage() {
           transition={{ duration: 0.8 }}
         >
           <Image
-            src="https://i2.ppvise.site/gimg/68498c43f0.jpg"
+            src="/hero.jpg"
             alt="New Collection"
             width={600}
             height={600}

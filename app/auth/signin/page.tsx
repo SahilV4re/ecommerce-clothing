@@ -74,7 +74,7 @@ export default function SignInPage() {
             </Link>
           </div>
           <div className="mt-4 text-center text-xs text-muted-foreground">
-            <p>Admin Login: admin@baygya.com / admin123</p>
+            
           </div>
         </CardContent>
       </Card>

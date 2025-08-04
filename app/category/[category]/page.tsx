@@ -19,12 +19,15 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  original_price: number;
+  original_price?: number;
   category: string;
   subcategory: string;
   image_url: string;
   stock: number;
   featured: boolean;
+  available_sizes?: string[];
+  available_colors?: string[];
+  additional_images?: string[];
 }
 
 interface CategoryPageProps {
@@ -44,7 +47,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const categoryNames = {
     men: "Men's Fashion",
     women: "Women's Fashion",
-    kids: "Kids' Fashion"
+    kids: "Kids' Fashion",
   };
 
   useEffect(() => {
@@ -60,12 +63,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('category', params.category)
+      .eq('category', params.category.toLowerCase()) // Convert to lowercase for consistency
       .gt('stock', 0);
 
     if (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching products:', error.message);
     } else {
+      console.log('Fetched products:', data); // Debug log
       setProducts(data || []);
     }
     setLoading(false);

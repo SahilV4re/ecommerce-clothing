@@ -25,8 +25,8 @@ function Footer() {
             <div>
               <h4 className="font-semibold mb-4">Customer Service</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><Link href="/contact" className="hover:text-foreground">Contact Us</Link></li>
-                <li><Link href="/shipping" className="hover:text-foreground">Shipping Info</Link></li>
+                <li><Link href="/contact-us" className="hover:text-foreground">Contact Us</Link></li>
+                <li><Link href="/shipping-info" className="hover:text-foreground">Shipping Info</Link></li>
                 <li><Link href="/returns" className="hover:text-foreground">Returns</Link></li>
                 <li><Link href="/size-guide" className="hover:text-foreground">Size Guide</Link></li>
               </ul>
@@ -34,9 +34,9 @@ function Footer() {
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><Link href="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
+                <li><Link href="/privacypolicy" className="hover:text-foreground">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="hover:text-foreground">Terms of Service</Link></li>
-                <li><Link href="/cookies" className="hover:text-foreground">Cookie Policy</Link></li>
+                <li><Link href="/cookie" className="hover:text-foreground">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
