@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ShoppingCart, User, Search, Menu } from 'lucide-react';
+import { ShoppingCart, Search, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 
@@ -24,10 +24,8 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Handle scroll event to toggle navbar background
   useEffect(() => {
     const handleScroll = () => {
-      // Change background when scroll position is greater than 50px
       setIsScrolled(window.scrollY > 50);
     };
 
@@ -60,8 +58,11 @@ export default function Header() {
             UrbanAttire
           </Link>
 
-          {/* Search */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8 bg-transparent">
+          {/* Search (desktop only) */}
+          <form
+            onSubmit={handleSearch}
+            className="hidden md:flex flex-1 max-w-md mx-8 bg-transparent"
+          >
             <div className="relative w-full">
               <Input
                 type="text"
@@ -80,7 +81,7 @@ export default function Header() {
             </div>
           </form>
 
-          {/* Navigation */}
+          {/* Navigation (desktop only) */}
           <nav className="hidden lg:flex items-center gap-6 text-sm font-medium">
             <Link href="/category/men" className="hover:text-primary transition-colors">
               Men
@@ -110,7 +111,7 @@ export default function Header() {
               </Button>
             </Link>
 
-            {/* User Menu */}
+            {/* User Menu (desktop only) */}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -134,13 +135,11 @@ export default function Header() {
                       <Link href="/admin">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    Sign Out
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex gap-2">
+              <div className="hidden lg:flex gap-2">
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="/auth/signin">Sign In</Link>
                 </Button>
@@ -168,8 +167,36 @@ export default function Header() {
                   <Link href="/category/kids">Kids</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/new-collections">New Collections</Link>
+                  <Link href="/new-collection">New Collections</Link>
                 </DropdownMenuItem>
+
+                <div className="border-t my-2" />
+
+                {user ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/orders">My Orders</Link>
+                    </DropdownMenuItem>
+                    {userRole === 'admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">Admin Dashboard</Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/signin">Sign In</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/signup">Sign Up</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
