@@ -40,10 +40,23 @@ interface Order {
   total_amount: number;
   status: string;
   created_at: string;
+  shipping_address: any;
+  payment_method: string;
   users: {
     name: string;
     email: string;
   };
+  order_items: Array<{
+    id: string;
+    quantity: number;
+    price: number;
+    size?: string;
+    color?: string;
+    products: {
+      name: string;
+      image_url: string;
+    };
+  }>;
 }
 
 export default function AdminDashboard() {
@@ -115,6 +128,17 @@ export default function AdminDashboard() {
       .from('orders')
       .select(`
         *,
+        order_items (
+          id,
+          quantity,
+          price,
+          size,
+          color,
+          products (
+            name,
+            image_url
+          )
+        ),
         users (
           name,
           email
@@ -127,6 +151,20 @@ export default function AdminDashboard() {
       console.error('Error fetching orders:', error);
     } else {
       setOrders(data || []);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    const { error } = await supabase
+      .from('orders')
+      .update({ status: newStatus })
+      .eq('id', orderId);
+
+    if (error) {
+      console.error('Error updating order status:', error);
+    } else {
+      // Refresh orders
+      await fetchOrders();
     }
   };
 
@@ -254,7 +292,12 @@ export default function AdminDashboard() {
         <TabsContent value="orders">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Orders</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>Recent Orders</CardTitle>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/admin/orders">View All Orders</Link>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -262,9 +305,11 @@ export default function AdminDashboard() {
                   <TableRow>
                     <TableHead>Order ID</TableHead>
                     <TableHead>Customer</TableHead>
+                    <TableHead>Items</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -281,22 +326,32 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {order.order_items?.length || 0} items
+                        </div>
+                      </TableCell>
                       <TableCell>₹{order.total_amount}</TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
-                            order.status === 'delivered'
-                              ? 'default'
-                              : order.status === 'processing'
-                              ? 'secondary'
-                              : 'outline'
-                          }
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          className="text-sm border rounded px-2 py-1"
                         >
-                          {order.status}
-                        </Badge>
+                          <option value="pending">Pending</option>
+                          <option value="processing">Processing</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
                       </TableCell>
                       <TableCell>
                         {new Date(order.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/admin/orders/${order.id}`}>View</Link>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
