@@ -14,7 +14,7 @@ import Image from 'next/image';
 interface OrderItem {
   id: string;
   quantity: number;
-  price: number;
+  price_at_purchase: number;
   size?: string;
   color?: string;
   product: {
@@ -55,7 +55,7 @@ export default function OrdersPage() {
         order_items (
           id,
           quantity,
-          price,
+          price_at_purchase,
           size,
           color,
           products (

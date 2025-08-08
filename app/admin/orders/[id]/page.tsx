@@ -80,7 +80,7 @@ export default function AdminOrderDetailPage() {
         order_items (
           id,
           quantity,
-          price,
+          price_at_purchase,
           size,
           color,
           products (

@@ -78,7 +78,7 @@ export default function AdminOrdersPage() {
         order_items (
           id,
           quantity,
-          price,
+          price_at_purchase,
           products (
             name
           )

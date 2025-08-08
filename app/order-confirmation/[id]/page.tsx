@@ -15,7 +15,7 @@ import Image from 'next/image';
 interface OrderItem {
   id: string;
   quantity: number;
-  price: number;
+  price_at_purchase: number; // Updated field name
   size?: string;
   color?: string;
   product: {
@@ -59,7 +59,7 @@ export default function OrderConfirmationPage() {
         order_items (
           id,
           quantity,
-          price,
+          price_at_purchase,
           size,
           color,
           products (
@@ -104,7 +104,7 @@ export default function OrderConfirmationPage() {
         <div className="text-center py-12">
           <h2 className="text-2xl font-semibold mb-2">Order not found</h2>
           <p className="text-muted-foreground mb-6">
-            The order you're looking for doesn't exist or you don't have permission to view it.
+            The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
           </p>
           <Button asChild>
             <Link href="/">Continue Shopping</Link>
@@ -124,7 +124,7 @@ export default function OrderConfirmationPage() {
         <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
         <h1 className="text-3xl font-bold text-green-600 mb-2">Order Confirmed!</h1>
         <p className="text-muted-foreground">
-          Thank you for your order. We'll send you a confirmation email shortly.
+          Thank you for your order. We&apos;ll send you a confirmation email shortly.
         </p>
       </div>
 
@@ -247,7 +247,7 @@ export default function OrderConfirmationPage() {
                         <span>Qty: {item.quantity}</span>
                       </div>
                       <p className="font-semibold text-sm">
-                        ₹{item.price * item.quantity}
+                        ₹{item.price_at_purchase * item.quantity}
                       </p>
                     </div>
                   </div>
