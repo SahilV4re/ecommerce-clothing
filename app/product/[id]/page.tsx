@@ -11,6 +11,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -80,7 +81,7 @@ export default function ProductDetail() {
   const discountPercentage = hasDiscount
     ? Math.round(((product.original_price! - product.price) / product.original_price!) * 100)
     : 0;
-  const deliveryDate = new Date('2025-08-04T17:02:00+05:30'); // Current time: 05:02 PM IST, August 4, 2025
+  const deliveryDate = new Date('2025-08-09T12:41:00+05:30'); // Current time: 12:41 PM IST, August 09, 2025
   deliveryDate.setDate(deliveryDate.getDate() + 1); // Assuming 1-day delivery
 
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -112,12 +113,32 @@ export default function ProductDetail() {
     }
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
+    if (!user) {
+      toast.error('Please sign in to proceed');
+      router.push('/auth/signin');
+      return;
+    }
+
     if (!selectedSize || !selectedColor) {
       toast.error('Please select a size and color.');
       return;
     }
-    console.log(`Buying ${product.name} - Size: ${selectedSize}, Color: ${selectedColor}`);
+
+    if (product.stock <= 0) {
+      toast.error('Product is out of stock');
+      return;
+    }
+
+    try {
+      // Optionally add to cart before redirecting
+      await addToCart(product.id, 1, selectedSize, selectedColor);
+      toast.success('Item added to cart, redirecting to checkout...');
+      router.push('/cart'); // Redirect to cart page
+    } catch (error) {
+      toast.error('Failed to add to cart');
+      console.error('Buy Now error:', error);
+    }
   };
 
   const colorMap: { [key: string]: string } = {
@@ -135,9 +156,11 @@ export default function ProductDetail() {
           {/* Image Gallery */}
           <div className="space-y-6">
             <div className="w-full h-[500px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-              <img
+              <Image
                 src={selectedImage}
                 alt={product.name}
+                width={256}
+                height={256}
                 className="w-full h-full object-contain p-4 transition-transform hover:scale-105"
               />
             </div>
@@ -148,9 +171,11 @@ export default function ProductDetail() {
                   onClick={() => setSelectedImage(img)}
                   className="w-full h-24 bg-gray-100 rounded-lg overflow-hidden hover:border-2 hover:border-primary transition-all shadow-md hover:shadow-lg"
                 >
-                  <img
+                  <Image
                     src={img}
                     alt={`${product.name} thumbnail ${index + 1}`}
+                    width={256}
+                    height={256}
                     className="w-full h-full object-contain p-2 transition-opacity hover:opacity-90"
                   />
                 </button>

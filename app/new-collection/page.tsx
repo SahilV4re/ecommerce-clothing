@@ -4,16 +4,15 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Star, Filter } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import ProductCard from '@/components/ProductCard'; // Import the ProductCard component
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   original_price?: number;
@@ -82,24 +81,6 @@ export default function NewCollectionsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleAddToCart = async (productId: number, title: string) => {
-    try {
-      await addToCart(productId.toString());
-      toast({
-        title: 'Added to Cart',
-        description: `${title} has been added to your cart.`,
-        duration: 3000,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to add item to cart. Please try again.',
-        variant: 'destructive',
-        duration: 3000,
-      });
-    }
-  };
-
   return (
     <div className="px-4 sm:px-6 md:px-10 py-12 max-w-8xl mx-auto bg-gray-50">
       {/* Hero Section */}
@@ -124,7 +105,7 @@ export default function NewCollectionsPage() {
           </Button>
         </motion.div>
         <motion.div
-          className="w-full "
+          className="w-full"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
@@ -193,42 +174,7 @@ export default function NewCollectionsPage() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="group hover:shadow-2xl transition-shadow duration-300 border-none bg-white rounded-xl overflow-hidden">
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    {product.original_price && (
-                      <Badge className="absolute top-3 left-3 bg-red-500 text-white">
-                        {(100 - (product.price / product.original_price * 100)).toFixed(0)}% OFF
-                      </Badge>
-                    )}
-                  </div>
-                  <CardContent className="py-4">
-                    <h3 className="font-semibold text-lg text-gray-800">{product.name}</h3>
-                    <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
-                    <div className="mt-2 text-lg font-bold text-gray-900">
-                      ₹{product.price}{' '}
-                      {product.original_price && (
-                        <span className="line-through text-sm text-gray-500 ml-2">
-                          ₹{product.original_price}
-                        </span>
-                      )}
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      className="w-full bg-black hover:bg-black text-white"
-                      onClick={() => handleAddToCart(product.id, product.name)}
-                      disabled={cartLoading || product.stock === 0}
-                      aria-label={`Add ${product.name} to cart`}
-                    >
-                      {cartLoading ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-                    </Button>
-                  </CardFooter>
-                </Card>
+                <ProductCard product={product} /> {/* Use the ProductCard component */}
               </motion.div>
             ))}
           </AnimatePresence>

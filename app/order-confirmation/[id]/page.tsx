@@ -51,41 +51,58 @@ export default function OrderConfirmationPage() {
   }, [user, id]);
 
   const fetchOrder = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        order_items (
-          id,
-          quantity,
-          price_at_purchase,
-          size,
-          color,
-          products (
-            name,
-            image_url
-          )
+  setLoading(true);
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      order_items (
+        id,
+        quantity,
+        price_at_purchase,
+        size,
+        color,
+        products (
+          name,
+          image_url
         )
-      `)
-      .eq('id', id)
-      .eq('user_id', user!.id)
-      .single();
+      )
+    `)
+    .eq('id', id)
+    .eq('user_id', user!.id)
+    .single();
 
-    if (error) {
-      console.error('Error fetching order:', error);
-      router.push('/');
-    } else {
-      setOrder({
-        ...data,
-        order_items: data.order_items.map((item: any) => ({
-          ...item,
-          product: item.products
-        }))
-      });
+  if (error) {
+    console.error('Error fetching order:', error);
+    router.push('/');
+  } else {
+    // Parse JSON strings for addresses
+    if (data.shipping_address && typeof data.shipping_address === 'string') {
+      try {
+        data.shipping_address = JSON.parse(data.shipping_address);
+      } catch (e) {
+        console.error('Error parsing shipping_address:', e);
+      }
     }
-    setLoading(false);
-  };
+    
+    if (data.billing_address && typeof data.billing_address === 'string') {
+      try {
+        data.billing_address = JSON.parse(data.billing_address);
+      } catch (e) {
+        console.error('Error parsing billing_address:', e);
+      }
+    }
+
+    setOrder({
+      ...data,
+      order_items: data.order_items.map((item: any) => ({
+        ...item,
+        product: item.products
+      }))
+    });
+  }
+  setLoading(false);
+};
 
   if (loading) {
     return (

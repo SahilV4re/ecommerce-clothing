@@ -21,6 +21,7 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 
 interface OrderItem {
+  price_at_purchase: number;
   id: string;
   quantity: number;
   price: number;
@@ -100,6 +101,23 @@ export default function AdminOrderDetailPage() {
       console.error('Error fetching order:', error);
       router.push('/admin/orders');
     } else {
+      // Parse JSON strings for addresses
+      if (data.shipping_address && typeof data.shipping_address === 'string') {
+        try {
+          data.shipping_address = JSON.parse(data.shipping_address);
+        } catch (e) {
+          console.error('Error parsing shipping_address:', e);
+        }
+      }
+      
+      if (data.billing_address && typeof data.billing_address === 'string') {
+        try {
+          data.billing_address = JSON.parse(data.billing_address);
+        } catch (e) {
+          console.error('Error parsing billing_address:', e);
+        }
+      }
+      
       setOrder(data);
     }
     setLoading(false);
@@ -308,7 +326,7 @@ export default function AdminOrderDetailPage() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm">Qty: {item.quantity}</span>
-                        <span className="font-semibold">₹{item.price * item.quantity}</span>
+                        <span className="font-semibold">₹{item.price_at_purchase * item.quantity}</span>
                       </div>
                     </div>
                   </div>
@@ -320,7 +338,7 @@ export default function AdminOrderDetailPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>₹{order.order_items.reduce((sum, item) => sum + (item.price * item.quantity), 0)}</span>
+                  <span>₹{order.order_items.reduce((sum, item) => sum + (item.price_at_purchase * item.quantity), 0)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>

@@ -135,9 +135,11 @@ export default function HomePage() {
         <div ref={sliderRef} className="keen-slider h-[110vh] overflow-hidden">
           {heroSlides.map((slide, index) => (
             <div key={index} className="keen-slider__slide relative will-change-transform">
-              <img
+              <Image
                 src={slide.image}
                 alt={slide.title}
+                width={256}
+                height={256}
                 className="w-full h-full object-cover opacity-90 transition-transform duration-1000 ease-in-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-center items-center text-center px-4">
@@ -219,7 +221,7 @@ export default function HomePage() {
               <Card key={index} className="p-6 shadow-md hover:shadow-lg transition-all">
                 <CardContent className="flex flex-col items-center text-center">
                   <Avatar className="w-16 h-16 mb-4">
-                    <img src={testimonial.image} alt={testimonial.name} className="object-cover" />
+                    <Image src={testimonial.image} alt={testimonial.name} width={256} height={256} className="object-cover" />
                     <AvatarFallback>{testimonial.initials}</AvatarFallback>
                   </Avatar>
                   <p className="text-muted-foreground italic mb-4">{testimonial.quote}</p>
