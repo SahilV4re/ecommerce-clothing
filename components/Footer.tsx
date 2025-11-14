@@ -41,7 +41,7 @@ function Footer() {
             </div>
           </div>
           <div className="border-t pt-8 text-center text-muted-foreground">
-            <p>&copy; 2025 UrbanAttire. All rights reserved.</p>
+            <p>&copy; 2025 Kalastrastyle. All rights reserved.</p>
           </div>
         </div>
       </footer>

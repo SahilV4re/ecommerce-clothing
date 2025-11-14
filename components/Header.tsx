@@ -55,7 +55,7 @@ export default function Header() {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="text-2xl font-bold text-primary">
-            UrbanAttire
+            Kalastrastyle
           </Link>
 
           {/* Search (desktop only) */}
