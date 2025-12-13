@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,11 +20,15 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
+const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const COLORS = ['Black', 'White', 'Blue', 'Red', 'Green'];
+
 export default function NewProductPage() {
   const { user, userRole } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [images, setImages] = useState<FileList | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -31,212 +36,203 @@ export default function NewProductPage() {
     original_price: '',
     category: '',
     subcategory: '',
-    image_url: '',
     stock: '',
     featured: false,
+    available_sizes: [] as string[],
+    available_colors: [] as string[],
   });
 
-  // Ensure we're on the client side before doing any redirects
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (!user || userRole !== 'admin') router.push('/');
+  }, [user, userRole, router]);
 
-  // Handle authentication redirect after component mounts
-  useEffect(() => {
-    if (isClient && (!user || userRole !== 'admin')) {
-      router.push('/');
+  /* ---------------- IMAGE UPLOAD ---------------- */
+  const uploadImages = async (files: FileList) => {
+    const urls: string[] = [];
+
+    for (const file of Array.from(files)) {
+      const ext = file.name.split('.').pop();
+      const fileName = `products/${crypto.randomUUID()}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(fileName);
+
+      urls.push(data.publicUrl);
     }
-  }, [isClient, user, userRole, router]);
 
-  // Don't render anything until we're on client side and have checked auth
-  if (!isClient) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardContent className="flex items-center justify-center p-8">
-              <div>Loading...</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+    return urls;
+  };
 
-  // Show loading while redirecting unauthorized users
-  if (!user || userRole !== 'admin') {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardContent className="flex items-center justify-center p-8">
-              <div>Redirecting...</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
+  /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      if (!images || images.length === 0) {
+        toast.error('Please upload at least one image');
+        return;
+      }
+
+      if (formData.available_sizes.length === 0) {
+        toast.error('Select at least one size');
+        return;
+      }
+
+      const imageUrls = await uploadImages(images);
+
       const { error } = await supabase.from('products').insert({
         name: formData.name,
         description: formData.description,
-        price: parseFloat(formData.price),
-        original_price: parseFloat(formData.original_price),
+        price: Number(formData.price),
+        original_price: Number(formData.original_price),
         category: formData.category,
         subcategory: formData.subcategory,
-        image_url: formData.image_url,
-        stock: parseInt(formData.stock),
+        stock: Number(formData.stock),
         featured: formData.featured,
+        image_url: imageUrls[0],
+        additional_images: imageUrls.slice(1),
+        available_sizes: formData.available_sizes,
+        available_colors: formData.available_colors,
       });
 
       if (error) throw error;
 
-      toast.success('Product added successfully!');
+      toast.success('Product added successfully');
       router.push('/admin');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to add product');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to add product');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
+  /* ---------------- UI ---------------- */
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Add New Product</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Product Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  required
-                />
-              </div>
+    <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <Card>
+        <CardHeader>
+          <CardTitle>Add New Product</CardTitle>
+        </CardHeader>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  required
-                />
-              </div>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Sale Price (₹)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={(e) => handleInputChange('price', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="original_price">Original Price (₹)</Label>
-                  <Input
-                    id="original_price"
-                    type="number"
-                    step="0.01"
-                    value={formData.original_price}
-                    onChange={(e) => handleInputChange('original_price', e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+            <div>
+              <Label>Product Name</Label>
+              <Input required onChange={e => setFormData({ ...formData, name: e.target.value })} />
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => handleInputChange('category', value)}
+            <div>
+              <Label>Description</Label>
+              <Textarea required onChange={e => setFormData({ ...formData, description: e.target.value })} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input placeholder="Sale Price" type="number" required onChange={e => setFormData({ ...formData, price: e.target.value })} />
+              <Input placeholder="Original Price" type="number" required onChange={e => setFormData({ ...formData, original_price: e.target.value })} />
+            </div>
+
+            <Select onValueChange={v => setFormData({ ...formData, category: v })}>
+              <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="men">Men</SelectItem>
+                <SelectItem value="women">Women</SelectItem>
+                <SelectItem value="kids">Kids</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Input placeholder="Subcategory" required onChange={e => setFormData({ ...formData, subcategory: e.target.value })} />
+
+            {/* -------- SIZES -------- */}
+            <div>
+              <Label>Available Sizes</Label>
+              <div className="flex gap-2 flex-wrap mt-2">
+                {SIZES.map(size => (
+                  <Button
+                    type="button"
+                    key={size}
+                    variant={formData.available_sizes.includes(size) ? 'default' : 'outline'}
+                    onClick={() =>
+                      setFormData(prev => ({
+                        ...prev,
+                        available_sizes: prev.available_sizes.includes(size)
+                          ? prev.available_sizes.filter(s => s !== size)
+                          : [...prev.available_sizes, size],
+                      }))
+                    }
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="men">Men</SelectItem>
-                      <SelectItem value="women">Women</SelectItem>
-                      <SelectItem value="kids">Kids</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    {size}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* -------- COLORS -------- */}
+            <div>
+              <Label>Available Colors</Label>
+              <div className="flex gap-2 flex-wrap mt-2">
+                {COLORS.map(color => (
+                  <Button
+                    type="button"
+                    key={color}
+                    variant={formData.available_colors.includes(color) ? 'default' : 'outline'}
+                    onClick={() =>
+                      setFormData(prev => ({
+                        ...prev,
+                        available_colors: prev.available_colors.includes(color)
+                          ? prev.available_colors.filter(c => c !== color)
+                          : [...prev.available_colors, color],
+                      }))
+                    }
+                  >
+                    {color}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* -------- IMAGES -------- */}
+            <div>
+              <Label>Product Images</Label>
+              <Input type="file" multiple accept="image/*" onChange={e => setImages(e.target.files)} />
+
+              {images && (
+                <div className="grid grid-cols-4 gap-2 mt-3">
+                  {Array.from(images).map((file, i) => (
+                    <Image
+                      key={i}
+                      src={URL.createObjectURL(file)}
+                      alt=""
+                      width={100}
+                      height={100}
+                      className="h-24 w-full object-cover rounded"
+                    />
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="subcategory">Subcategory</Label>
-                  <Input
-                    id="subcategory"
-                    value={formData.subcategory}
-                    onChange={(e) => handleInputChange('subcategory', e.target.value)}
-                    placeholder="e.g., T-shirts, Jeans, Hoodies"
-                    required
-                  />
-                </div>
-              </div>
+              )}
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input
-                  id="image_url"
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => handleInputChange('image_url', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  required
-                />
-              </div>
+            <Input placeholder="Stock Quantity" type="number" required onChange={e => setFormData({ ...formData, stock: e.target.value })} />
 
-              <div className="space-y-2">
-                <Label htmlFor="stock">Stock Quantity</Label>
-                <Input
-                  id="stock"
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) => handleInputChange('stock', e.target.value)}
-                  required
-                />
-              </div>
+            <div className="flex items-center gap-2">
+              <Checkbox checked={formData.featured} onCheckedChange={v => setFormData({ ...formData, featured: Boolean(v) })} />
+              <Label>Featured Product</Label>
+            </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="featured"
-                  checked={formData.featured}
-                  onCheckedChange={(checked) => handleInputChange('featured', checked as boolean)}
-                />
-                <Label htmlFor="featured">Featured Product</Label>
-              </div>
-
-              <div className="flex gap-4">
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Adding Product...' : 'Add Product'}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => router.back()}>
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            <Button disabled={loading}>
+              {loading ? 'Adding...' : 'Add Product'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
