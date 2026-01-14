@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { Star } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -81,8 +81,22 @@ export default function ProductDetail() {
   const discountPercentage = hasDiscount
     ? Math.round(((product.original_price! - product.price) / product.original_price!) * 100)
     : 0;
-  const deliveryDate = new Date('2025-08-09T12:41:00+05:30'); // Current time: 12:41 PM IST, August 09, 2025
-  deliveryDate.setDate(deliveryDate.getDate() + 1); // Assuming 1-day delivery
+  // Delivery window: 5–7 days from today
+const today = new Date();
+
+const minDeliveryDate = new Date(today);
+minDeliveryDate.setDate(today.getDate() + 5);
+
+const maxDeliveryDate = new Date(today);
+maxDeliveryDate.setDate(today.getDate() + 7);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'long',
+  });
+
 
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   const isSizeAvailable = (size: string) => product.available_sizes?.includes(size) || false;
@@ -189,12 +203,12 @@ export default function ProductDetail() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                 {product.name}
               </h1>
-              <div className="flex items-center gap-2 text-yellow-400">
+              {/* <div className="flex items-center gap-2 text-yellow-400">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="h-5 w-5 fill-current animate-pulse" />
                 ))}
                 <span className="text-sm text-gray-600">(4.5 | 1,234 ratings)</span>
-              </div>
+              </div> */}
               <div className="mt-4 space-y-2">
                 <p className="text-xl font-bold text-gray-900">
                   ₹{product.price.toFixed(2)}
@@ -210,8 +224,12 @@ export default function ProductDetail() {
                   )}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Inclusive of all taxes | Free delivery by {deliveryDate.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-                </p>
+  Inclusive of all taxes | Delivery between{" "}
+  <span className="font-medium">
+    {formatDate(minDeliveryDate)} – {formatDate(maxDeliveryDate)}
+  </span>
+</p>
+
               </div>
               <p className="text-sm text-gray-600 mt-2">
                 {product.stock > 0 ? `In Stock: ${product.stock} units` : 'Out of Stock'}
@@ -221,7 +239,7 @@ export default function ProductDetail() {
             {/* Sticky Action Panel */}
             <div
               ref={stickyRef}
-              className="lg:sticky lg:top-20 p-6 bg-white rounded-xl shadow-lg border border-gray-200"
+              className="p-6 bg-white rounded-xl shadow-lg border border-gray-200"
             >
               <div className="space-y-4">
                 <div>
@@ -297,30 +315,15 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <Tabs defaultValue="description" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gradient-to-b from-gray-100 to-gray-200 p-1 rounded-lg">
-                <TabsTrigger value="description" className="data-[state=active]:bg-white data-[state=active]:shadow-md">Description</TabsTrigger>
-                <TabsTrigger value="reviews" className="data-[state=active]:bg-white data-[state=active]:shadow-md">Reviews</TabsTrigger>
-                <TabsTrigger value="details" className="data-[state=active]:bg-white data-[state=active]:shadow-md">Additional Details</TabsTrigger>
-              </TabsList>
-              <TabsContent value="description" className="mt-4 text-gray-700">
-                <p className="text-left">
-                  {product.description || 'No description available for this product.'}
-                </p>
-              </TabsContent>
-              <TabsContent value="reviews" className="mt-4 text-gray-700">
-                <p className="text-left">
-                  No reviews yet. Be the first to review this product!
-                </p>
-              </TabsContent>
-              <TabsContent value="details" className="mt-4 text-gray-700">
-                <ul className="list-disc list-inside space-y-2">
-                  <li>Category: {product.category}</li>
-                  <li>Material: 100% Cotton (example)</li>
-                  <li>Care Instructions: Machine wash cold</li>
-                </ul>
-              </TabsContent>
-            </Tabs>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-3">
+    Product Description
+  </h2>
+  <p className="text-sm text-gray-700 leading-relaxed">
+    {product.description || 'No description available for this product.'}
+  </p>
+</div>
+
           </div>
         </div>
 
@@ -332,7 +335,7 @@ export default function ProductDetail() {
           <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
             Discover other products in this category.
           </p>
-          <Button asChild className="rounded-full bg-gradient-to-r from-primary to-blue-600 text-white hover:from-primary/80 hover:to-blue-500 px-6 py-2">
+          <Button asChild className="rounded-full bg-gradient-to-r from-primary to-primary text-white hover:from-slate-700 hover:to-slate-700 px-6 py-2">
             <Link href={`/category/${product.category.toLowerCase()}`}>Shop Category</Link>
           </Button>
         </section>

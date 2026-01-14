@@ -1,10 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
 export type Database = {
   public: {
     Tables: {
@@ -31,6 +24,7 @@ export type Database = {
           created_at?: string
         }
       }
+
       products: {
         Row: {
           id: string
@@ -72,6 +66,7 @@ export type Database = {
           created_at?: string
         }
       }
+
       cart_items: {
         Row: {
           id: string
@@ -95,6 +90,7 @@ export type Database = {
           created_at?: string
         }
       }
+
       orders: {
         Row: {
           id: string

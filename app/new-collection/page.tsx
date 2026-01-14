@@ -9,7 +9,7 @@ import Link from 'next/link';
 import ProductCard from '@/components/ProductCard'; // Import the ProductCard component
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 
 interface Product {
   id: string;

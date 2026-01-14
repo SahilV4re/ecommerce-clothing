@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -46,20 +46,20 @@ const categories = [
 
 const testimonials = [
   {
-    name: 'Alex Thompson',
-    initials: 'AT',
+    name: 'Sunil Dhage',
+    initials: 'SD',
     quote: 'The quality and style of the clothes are unmatched! Fast shipping and great customer service.',
     image: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg',
   },
   {
-    name: 'Sarah Lee',
-    initials: 'SL',
+    name: 'Aadesh Lad',
+    initials: 'AL',
     quote: 'I love the curated collections! It’s so easy to find trendy outfits for any occasion.',
     image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg',
   },
   {
-    name: 'Michael Chen',
-    initials: 'MC',
+    name: 'Avaneesh Kadam',
+    initials: 'AK',
     quote: 'Amazing deals and super comfortable clothing. This is my go-to store now!',
     image: 'https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg',
   },
@@ -221,7 +221,7 @@ export default function HomePage() {
               <Card key={index} className="p-6 shadow-md hover:shadow-lg transition-all">
                 <CardContent className="flex flex-col items-center text-center">
                   <Avatar className="w-16 h-16 mb-4">
-                    <Image src={testimonial.image} alt={testimonial.name} width={256} height={256} className="object-cover" />
+                    {/* <Image src={testimonial.image} alt={testimonial.name} width={256} height={256} className="object-cover" /> */}
                     <AvatarFallback>{testimonial.initials}</AvatarFallback>
                   </Avatar>
                   <p className="text-muted-foreground italic mb-4">{testimonial.quote}</p>

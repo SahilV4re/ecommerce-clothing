@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -105,12 +105,12 @@ export default function ContactUs() {
             <div className="space-y-4 text-muted-foreground">
               <div>
                 <h3 className="font-semibold text-lg">Email</h3>
-                <p>support@urbanattire.com</p>
+                <p>support@kalastrastyle.com</p>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="font-semibold text-lg">Phone</h3>
-                <p>+1 (800) 123-4567</p>
-              </div>
+                <p>+91 (800) 123-4567</p>
+              </div> */}
               <div>
                 <h3 className="font-semibold text-lg">Address</h3>
                 <p>Mumbai, Maharashtra</p>

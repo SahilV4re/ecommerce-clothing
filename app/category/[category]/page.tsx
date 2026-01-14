@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import ProductCard from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
 import {
@@ -47,7 +47,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const categoryNames = {
     men: "Men's Fashion",
     women: "Women's Fashion",
-    kids: "Kids' Fashion",
+    kids: "Kid's Fashion",
   };
 
   useEffect(() => {

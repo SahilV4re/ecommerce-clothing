@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
       <main className="container mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold text-center mb-12">Privacy Policy</h1>
         <p className="text-lg text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
-          At UrbanAttire, we value your privacy. This Privacy Policy explains how we collect, use, and protect your personal information in compliance with applicable laws, including the Information Technology Act, 2000.
+          At Kalastrastyle, we value your privacy. This Privacy Policy explains how we collect, use, and protect your personal information in compliance with applicable laws, including the Information Technology Act, 2000.
         </p>
 
         {/* Privacy Policy Details */}
@@ -57,7 +57,7 @@ export default function PrivacyPolicy() {
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-2">6. Contact Us</h3>
-                <p>For privacy-related inquiries, reach us at support@urbanattire.com or 123 Fashion St, New York, NY 10001.</p>
+                <p>For privacy-related inquiries, reach us at support@kalastrastyle.com or Kalyan, Mumbai, Maharashtra.</p>
               </div>
             </div>
           </div>

@@ -59,11 +59,11 @@ export default function Header() {
           </Link>
 
           {/* Search (desktop only) */}
-          <form
+          {/* <form
             onSubmit={handleSearch}
             className="hidden md:flex flex-1 max-w-md mx-8 bg-transparent"
-          >
-            <div className="relative w-full">
+          > */}
+            {/* <div className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search for styles..."
@@ -79,7 +79,27 @@ export default function Header() {
                 <Search className="h-4 w-4" />
               </Button>
             </div>
-          </form>
+          </form> */}
+          {/* Search placeholder (desktop only) */}
+<div className="hidden md:flex flex-1 max-w-md mx-8">
+  <div className="relative w-full">
+    <Input
+      type="text"
+      placeholder="Search coming soon..."
+      disabled
+      className="pr-10 cursor-not-allowed"
+    />
+    <Button
+      type="button"
+      size="sm"
+      disabled
+      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+    >
+      <Search className="h-4 w-4" />
+    </Button>
+  </div>
+</div>
+
 
           {/* Navigation (desktop only) */}
           <nav className="hidden lg:flex items-center gap-6 text-sm font-medium">
@@ -203,7 +223,7 @@ export default function Header() {
         </div>
 
         {/* Mobile search */}
-        <form onSubmit={handleSearch} className="md:hidden mt-4">
+        {/* <form onSubmit={handleSearch} className="md:hidden mt-4">
           <div className="relative">
             <Input
               type="text"
@@ -220,7 +240,7 @@ export default function Header() {
               <Search className="h-4 w-4" />
             </Button>
           </div>
-        </form>
+        </form> */}
       </div>
     </header>
   );

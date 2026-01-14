@@ -43,7 +43,7 @@ export default function TermsOfService() {
               <div>
                 <h3 className="font-semibold text-lg mb-2">4. Intellectual Property</h3>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>All content on our website (e.g., images, logos, text) is owned by UrbanAttire or its licensors.</li>
+                  <li>All content on our website (e.g., images, logos, text) is owned by Kalastrastyle or its licensors.</li>
                   <li>You may not reproduce, distribute, or modify our content without permission.</li>
                 </ul>
               </div>
@@ -57,7 +57,7 @@ export default function TermsOfService() {
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-2">7. Contact Us</h3>
-                <p>For questions about these terms, contact us at support@urbanattire.com or 123 Fashion St, New York, NY 10001.</p>
+                <p>For questions about these terms, contact us at support@kalastrastyle.com or Kalyan, Mumbai, Maharashtra.</p>
               </div>
             </div>
           </div>
