@@ -108,8 +108,8 @@ const formatDate = (date: Date) =>
       return;
     }
 
-    if (!selectedSize || !selectedColor) {
-      toast.error('Please select a size and color.');
+    if (!selectedSize) {
+      toast.error('Please select a size.');
       return;
     }
 
@@ -134,8 +134,8 @@ const formatDate = (date: Date) =>
       return;
     }
 
-    if (!selectedSize || !selectedColor) {
-      toast.error('Please select a size and color.');
+    if (!selectedSize) {
+      toast.error('Please select a size.');
       return;
     }
 
@@ -271,7 +271,7 @@ const formatDate = (date: Date) =>
                     ))}
                   </div>
                 </div>
-                <div>
+                {/* <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Color</label>
                   <div className="flex gap-3 flex-wrap">
                     {product.available_colors?.map((color) => (
@@ -296,11 +296,11 @@ const formatDate = (date: Date) =>
                       </label>
                     )) || <p className="text-sm text-gray-500">No colors available</p>}
                   </div>
-                </div>
+                </div> */}
                 <Button
                   className="w-full rounded-full bg-green-600 text-white hover:bg-green-700 transition-colors"
                   onClick={handleAddToCart}
-                  disabled={cartLoading || product.stock <= 0 || !selectedSize || !selectedColor}
+                  disabled={cartLoading || product.stock <= 0 || !selectedSize}
                 >
                   {cartLoading ? 'Adding...' : 'Add to Cart'}
                 </Button>
@@ -308,7 +308,7 @@ const formatDate = (date: Date) =>
                   variant="secondary"
                   className="w-full rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                   onClick={handleBuyNow}
-                  disabled={product.stock <= 0 || !selectedSize || !selectedColor}
+                  disabled={product.stock <= 0 || !selectedSize}
                 >
                   Buy Now
                 </Button>

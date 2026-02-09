@@ -60,6 +60,13 @@ export default function CartPage() {
       </div>
     );
   }
+  const subtotal = getCartTotal();
+const FREE_DELIVERY_THRESHOLD = 500;
+const DELIVERY_CHARGE = 99;
+
+const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD;
+const shippingCost = isFreeDelivery ? 0 : DELIVERY_CHARGE;
+const totalAmount = subtotal + shippingCost;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -130,35 +137,55 @@ export default function CartPage() {
         {/* Order Summary */}
         <div className="lg:col-span-1">
           <Card className="sticky top-24">
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span>Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                <span>₹{getCartTotal()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span className="text-green-600">Free</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
-                <span>₹{getCartTotal()}</span>
-              </div>
-              <Button className="w-full" size="lg" asChild>
-                <Link href="/checkout">
-                  Proceed to Checkout
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/">
-                  Continue Shopping
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+  <CardHeader>
+    <CardTitle>Order Summary</CardTitle>
+  </CardHeader>
+
+  <CardContent className="space-y-4">
+    {/* Subtotal */}
+    <div className="flex justify-between">
+      <span>
+        Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} items)
+      </span>
+      <span>₹{subtotal}</span>
+    </div>
+
+    {/* Shipping */}
+    <div className="flex justify-between">
+      <span>Delivery</span>
+      {isFreeDelivery ? (
+        <span className="text-green-600 font-medium">Free</span>
+      ) : (
+        <span>₹{DELIVERY_CHARGE}</span>
+      )}
+    </div>
+
+    {/* Free delivery hint */}
+    {!isFreeDelivery && (
+      <p className="text-sm text-muted-foreground">
+        Add items worth ₹{FREE_DELIVERY_THRESHOLD - subtotal} more to get
+        <span className="font-medium text-green-600"> free delivery</span>
+      </p>
+    )}
+
+    <Separator />
+
+    {/* Total */}
+    <div className="flex justify-between text-lg font-bold">
+      <span>Total</span>
+      <span>₹{totalAmount}</span>
+    </div>
+
+    <Button className="w-full" size="lg" asChild>
+      <Link href="/checkout">Proceed to Checkout</Link>
+    </Button>
+
+    <Button variant="outline" className="w-full" asChild>
+      <Link href="/">Continue Shopping</Link>
+    </Button>
+  </CardContent>
+</Card>
+
         </div>
       </div>
     </div>

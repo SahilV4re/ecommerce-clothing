@@ -234,7 +234,7 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-20 px-6 bg-primary/10">
+      {/* <section className="py-20 px-6 bg-primary/10">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">Join Our Newsletter</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
@@ -260,7 +260,7 @@ export default function HomePage() {
             <p className="text-red-600 mt-4">Something went wrong. Please try again.</p>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* Popular Products */}
       {popularProducts.length > 0 && (

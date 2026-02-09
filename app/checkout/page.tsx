@@ -289,7 +289,7 @@ export default function CheckoutPage() {
                       </h4>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         {item.size && <Badge variant="outline">{item.size}</Badge>}
-                        {item.color && <Badge variant="outline">{item.color}</Badge>}
+                        {/* {item.color && <Badge variant="outline">{item.color}</Badge>} */}
                         <span>Qty: {item.quantity}</span>
                       </div>
                       <p className="font-semibold text-sm">

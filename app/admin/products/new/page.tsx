@@ -85,6 +85,7 @@ export default function NewProductPage() {
         toast.error('Select at least one size');
         return;
       }
+      
 
       const imageUrls = await uploadImages(images);
 
@@ -176,7 +177,7 @@ export default function NewProductPage() {
             </div>
 
             {/* -------- COLORS -------- */}
-            <div>
+            {/* <div>
               <Label>Available Colors</Label>
               <div className="flex gap-2 flex-wrap mt-2">
                 {COLORS.map(color => (
@@ -197,7 +198,7 @@ export default function NewProductPage() {
                   </Button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* -------- IMAGES -------- */}
             <div>
