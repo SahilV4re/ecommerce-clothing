@@ -14,21 +14,21 @@ import { useKeenSlider } from 'keen-slider/react';
 
 const heroSlides = [
   {
-    image: 'https://images.pexels.com/photos/1670766/pexels-photo-1670766.jpeg',
+    image: '/mens-hero.webp',
     title: 'Unleash Your Style',
     subtitle: 'Bold. Fresh. Unapologetic.',
     buttonText: 'Shop Now',
     href: '/new-collection',
   },
   {
-    image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+    image: 'mens-hero2.webp',
     title: 'Elevate Everyday',
     subtitle: 'Trendy fits for every vibe.',
     buttonText: 'Shop Men',
     href: '/category/men',
   },
   {
-    image: '/new-clloection.jpg',
+    image: '/new-collection.webp',
     title: 'Own the Moment',
     subtitle: 'Curated for the fearless.',
     buttonText: 'Shop Women',
@@ -141,6 +141,8 @@ export default function HomePage() {
                 width={256}
                 height={256}
                 className="w-full h-full object-cover opacity-90 transition-transform duration-1000 ease-in-out"
+                priority
+                fetchPriority="high"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-center items-center text-center px-4">
                 <h2 className="text-white text-4xl md:text-6xl font-extrabold drop-shadow-lg mb-4 will-change-opacity transition-opacity duration-500">
