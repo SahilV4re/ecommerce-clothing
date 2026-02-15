@@ -19,7 +19,7 @@ function Footer() {
                 <li><Link href="/category/men" className="hover:text-foreground">Men&apos;s Fashion</Link></li>
                 <li><Link href="/category/women" className="hover:text-foreground">Women&apos;s Fashion</Link></li>
                 <li><Link href="/category/kids" className="hover:text-foreground">Kid&apos;s Fashion</Link></li>
-                <li><Link href="/new-collections" className="hover:text-foreground">New Collections</Link></li>
+                <li><Link href="/new-collection" className="hover:text-foreground">New Collections</Link></li>
               </ul>
             </div>
             <div>

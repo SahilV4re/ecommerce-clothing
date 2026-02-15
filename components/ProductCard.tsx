@@ -1,4 +1,4 @@
-'use client';
+
 
 import React from 'react';
 import Link from 'next/link';
@@ -95,7 +95,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.name}
             </h3>
             
-            <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
@@ -103,7 +103,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 />
               ))}
               <span className="text-xs text-muted-foreground ml-1">(4.5)</span>
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold">₹{product.price}</span>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,16 +37,8 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) {
-      router.push('/auth/signin');
-      return;
-    }
 
-    fetchOrders();
-  }, [user]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('orders')
@@ -79,7 +71,18 @@ export default function OrdersPage() {
       })) || []);
     }
     setLoading(false);
-  };
+  },[user]);
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    fetchOrders();
+  }, [user, fetchOrders, router]);
+
+  
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -193,7 +196,7 @@ export default function OrdersPage() {
                         </p>
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           {item.size && <Badge variant="outline" className="text-xs">{item.size}</Badge>}
-                          {item.color && <Badge variant="outline" className="text-xs">{item.color}</Badge>}
+                          {/* {item.color && <Badge variant="outline" className="text-xs">{item.color}</Badge>} */}
                           <span>Qty: {item.quantity}</span>
                         </div>
                       </div>

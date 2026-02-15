@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -39,7 +39,7 @@ interface Order {
   order_items: Array<{
     id: string;
     quantity: number;
-    price: number;
+    price_at_purchase: number;
     products: {
       name: string;
     };
@@ -50,26 +50,10 @@ export default function AdminOrdersPage() {
   const { user, userRole, loading: authLoading } = useAuth();
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-
-  useEffect(() => {
-    if (!authLoading) {
-      if (!user || userRole !== 'admin') {
-        router.push('/');
-        return;
-      }
-      fetchOrders();
-    }
-  }, [user, userRole, authLoading, router]);
-
-  useEffect(() => {
-    filterOrders();
-  }, [orders, searchQuery, statusFilter]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('orders')
@@ -96,27 +80,38 @@ export default function AdminOrdersPage() {
       setOrders(data || []);
     }
     setLoading(false);
-  };
-
-  const filterOrders = () => {
-    let filtered = [...orders];
-
-    // Search filter
-    if (searchQuery) {
-      filtered = filtered.filter(order =>
-        order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.users?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.users?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+  }, []);
+  
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user || userRole !== 'admin') {
+        router.push('/');
+        return;
+      }
+      fetchOrders();
     }
+  }, [user, userRole, authLoading, router, fetchOrders]);
+  
+  const filteredOrders = useMemo(() => {
+  let filtered = orders;
+  const query = searchQuery.toLowerCase();
+  if (query) {
+    filtered = filtered.filter(order =>
+      order.id.toLowerCase().includes(query) ||
+      order.users?.name?.toLowerCase().includes(query) ||
+      order.users?.email?.toLowerCase().includes(query)
+    );
+  }
 
-    // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(order => order.status === statusFilter);
-    }
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(order => order.status === statusFilter);
+  }
 
-    setFilteredOrders(filtered);
-  };
+  return filtered;
+}, [orders, searchQuery, statusFilter]);
+
+
+  
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     const { error } = await supabase
@@ -128,9 +123,11 @@ export default function AdminOrdersPage() {
       console.error('Error updating order status:', error);
     } else {
       // Update local state
-      setOrders(orders.map(order => 
-        order.id === orderId ? { ...order, status: newStatus } : order
-      ));
+      setOrders(prev =>
+      prev.map(order =>
+      order.id === orderId ? { ...order, status: newStatus } : order
+    )
+);
     }
   };
 
@@ -165,6 +162,16 @@ export default function AdminOrdersPage() {
   if (!user || userRole !== 'admin') {
     return null;
   }
+  const calculateShipping = (order: Order) => {
+  const subtotal = order.order_items.reduce(
+    (sum, item) => sum + item.price_at_purchase * item.quantity,
+    0
+  );
+
+  const shipping = subtotal < 500 ? 99 : 0;
+
+  return { subtotal, shipping, total: subtotal + shipping };
+};
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -260,7 +267,10 @@ export default function AdminOrdersPage() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">
-                        ₹{order.total_amount}
+                          {(() => {
+                          const { total } = calculateShipping(order);
+                          return `₹${total}`;
+                          })()}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="capitalize">

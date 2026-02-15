@@ -134,7 +134,7 @@ export default function CheckoutPage() {
   };
 
   const subtotal = getCartTotal();
-  const shippingCost = subtotal >= 999 ? 0 : 99;
+  const shippingCost = subtotal >= 500 ? 0 : 99;
   const total = subtotal + shippingCost;
 
   if (!user || items.length === 0) {
@@ -316,7 +316,7 @@ export default function CheckoutPage() {
                 </div>
                 {shippingCost === 0 && (
                   <p className="text-xs text-green-600">
-                    Free shipping on orders over ₹999
+                    Free shipping on orders over ₹500
                   </p>
                 )}
               </div>

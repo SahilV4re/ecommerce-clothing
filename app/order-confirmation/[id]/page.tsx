@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -34,23 +34,25 @@ interface Order {
   order_items: OrderItem[];
 }
 
+const calculateShipping = (order: Order) => {
+  const subtotal = order.order_items.reduce(
+    (sum, item) => sum + item.price_at_purchase * item.quantity,
+    0
+  );
+
+  const shipping = subtotal < 500 ? 99 : 0;
+
+  return { subtotal, shipping, total: subtotal + shipping };
+};
+
 export default function OrderConfirmationPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/auth/signin');
-      return;
-    }
-
-    fetchOrder();
-  }, [user, id]);
-
-  const fetchOrder = async () => {
+  
+  const fetchOrder = useCallback(async () => {
   setLoading(true);
   const { data, error } = await supabase
     .from('orders')
@@ -102,7 +104,18 @@ export default function OrderConfirmationPage() {
     });
   }
   setLoading(false);
-};
+},[user, id, router]);
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    fetchOrder();
+  }, [user, id, fetchOrder, router]);
+
+  
 
   if (loading) {
     return (
@@ -229,7 +242,10 @@ export default function OrderConfirmationPage() {
                 <span>Cash on Delivery</span>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Pay ₹{order.total_amount} when your order is delivered.
+                Pay {(() => {
+    const { total } = calculateShipping(order);
+    return `₹${total}`;
+  })()} when your order is delivered.
               </p>
             </CardContent>
           </Card>
@@ -260,7 +276,7 @@ export default function OrderConfirmationPage() {
                       </h4>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         {item.size && <Badge variant="outline">{item.size}</Badge>}
-                        {item.color && <Badge variant="outline">{item.color}</Badge>}
+                        {/* {item.color && <Badge variant="outline">{item.color}</Badge>} */}
                         <span>Qty: {item.quantity}</span>
                       </div>
                       <p className="font-semibold text-sm">
@@ -275,7 +291,10 @@ export default function OrderConfirmationPage() {
 
               <div className="flex justify-between text-lg font-bold">
                 <span>Total Paid</span>
-                <span>₹{order.total_amount}</span>
+                <span>{(() => {
+    const { total } = calculateShipping(order);
+    return `₹${total}`;
+  })()}</span>
               </div>
 
               <div className="space-y-2">

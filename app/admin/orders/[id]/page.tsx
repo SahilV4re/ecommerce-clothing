@@ -61,18 +61,10 @@ export default function AdminOrderDetailPage() {
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
-    if (!authLoading) {
-      if (!user || userRole !== 'admin') {
-        router.push('/');
-        return;
-      }
-      fetchOrder();
-    }
-  }, [user, userRole, authLoading, router, id]);
 
-  const fetchOrder = async () => {
+    const fetchOrder = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('orders')
@@ -121,7 +113,18 @@ export default function AdminOrderDetailPage() {
       setOrder(data);
     }
     setLoading(false);
-  };
+    };
+    
+    if (!authLoading) {
+      if (!user || userRole !== 'admin') {
+        router.push('/');
+        return;
+      }
+      fetchOrder();
+    }
+  }, [user, userRole, authLoading, router, id]);
+
+  
 
   const updateOrderStatus = async (newStatus: string) => {
     if (!order) return;
@@ -177,6 +180,12 @@ export default function AdminOrderDetailPage() {
   if (!user || userRole !== 'admin' || !order) {
     return null;
   }
+  const subtotal = order.order_items.reduce(
+  (sum, item) => sum + item.price_at_purchase * item.quantity,
+  0
+);
+
+const shippingCharge = subtotal < 500 ? 99 : 0;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -227,7 +236,7 @@ export default function AdminOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="font-bold text-lg">₹{order.total_amount}</p>
+                  <p className="font-bold text-lg">₹{subtotal + shippingCharge}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Payment Method</p>
@@ -322,7 +331,7 @@ export default function AdminOrderDetailPage() {
                       </h4>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                         {item.size && <Badge variant="outline" className="text-xs">{item.size}</Badge>}
-                        {item.color && <Badge variant="outline" className="text-xs">{item.color}</Badge>}
+                        {/* {item.color && <Badge variant="outline" className="text-xs">{item.color}</Badge>} */}
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm">Qty: {item.quantity}</span>
@@ -341,16 +350,21 @@ export default function AdminOrderDetailPage() {
                   <span>₹{order.order_items.reduce((sum, item) => sum + (item.price_at_purchase * item.quantity), 0)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="text-green-600">Free</span>
-                </div>
+  <span>Shipping</span>
+  {shippingCharge === 0 ? (
+    <span className="text-green-600 font-medium">Free</span>
+  ) : (
+    <span>₹{shippingCharge}</span>
+  )}
+</div>
+
               </div>
 
               <Separator />
 
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>₹{order.total_amount}</span>
+                <span>₹{subtotal + shippingCharge}</span>
               </div>
             </CardContent>
           </Card>
