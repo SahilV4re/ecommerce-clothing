@@ -1,27 +1,28 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ShoppingCart, Search, Menu } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useCart } from '@/contexts/CartContext';
+} from "@/components/ui/dropdown-menu";
+import { ShoppingCart, Search, Menu } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 
 export default function Header() {
   const { user, userRole, signOut } = useAuth();
   const { getCartCount } = useCart();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -29,8 +30,8 @@ export default function Header() {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -42,20 +43,29 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/70 backdrop-blur-sm shadow-sm' : 'bg-transparent'
+        isScrolled ? "bg-white/70 backdrop-blur-sm shadow-sm" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-4">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between gap-1">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-primary">
-            Kalastrastyle
+          <Link href="/" className="flex items-center gap-1">
+            <Image
+              src="/logo3.webp"
+              alt="Kalastrastyle Logo"
+              width={70}
+              height={70}
+              className="object-contain"
+            />
+            <span className="text-2xl font-bold text-primary">
+              KalastraStyle
+            </span>
           </Link>
 
           {/* Search (desktop only) */}
@@ -63,7 +73,7 @@ export default function Header() {
             onSubmit={handleSearch}
             className="hidden md:flex flex-1 max-w-md mx-8 bg-transparent"
           > */}
-            {/* <div className="relative w-full">
+          {/* <div className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search for styles..."
@@ -81,38 +91,49 @@ export default function Header() {
             </div>
           </form> */}
           {/* Search placeholder (desktop only) */}
-<div className="hidden md:flex flex-1 max-w-md mx-8">
-  <div className="relative w-full">
-    <Input
-      type="text"
-      placeholder="Search coming soon..."
-      disabled
-      className="pr-10 cursor-not-allowed"
-    />
-    <Button
-      type="button"
-      size="sm"
-      disabled
-      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-    >
-      <Search className="h-4 w-4" />
-    </Button>
-  </div>
-</div>
-
+          <div className="hidden md:flex flex-1 max-w-md mx-8">
+            <div className="relative w-full">
+              <Input
+                type="text"
+                placeholder="Search coming soon..."
+                disabled
+                className="pr-10 cursor-not-allowed"
+              />
+              <Button
+                type="button"
+                size="sm"
+                disabled
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
 
           {/* Navigation (desktop only) */}
           <nav className="hidden lg:flex items-center gap-6 text-sm font-medium">
-            <Link href="/category/men" className="hover:text-primary transition-colors">
+            <Link
+              href="/category/men"
+              className="hover:text-primary transition-colors"
+            >
               Men
             </Link>
-            <Link href="/category/women" className="hover:text-primary transition-colors">
+            <Link
+              href="/category/women"
+              className="hover:text-primary transition-colors"
+            >
               Women
             </Link>
-            <Link href="/category/kids" className="hover:text-primary transition-colors">
+            <Link
+              href="/category/kids"
+              className="hover:text-primary transition-colors"
+            >
               Kids
             </Link>
-            <Link href="/new-collection" className="hover:text-primary transition-colors">
+            <Link
+              href="/new-collection"
+              className="hover:text-primary transition-colors"
+            >
               New Collections
             </Link>
           </nav>
@@ -150,12 +171,14 @@ export default function Header() {
                   <DropdownMenuItem asChild>
                     <Link href="/orders">My Orders</Link>
                   </DropdownMenuItem>
-                  {userRole === 'admin' && (
+                  {userRole === "admin" && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -200,12 +223,14 @@ export default function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/orders">My Orders</Link>
                     </DropdownMenuItem>
-                    {userRole === 'admin' && (
+                    {userRole === "admin" && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin">Admin Dashboard</Link>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      Sign Out
+                    </DropdownMenuItem>
                   </>
                 ) : (
                   <>
