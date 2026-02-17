@@ -84,7 +84,7 @@ export default function HomeClient({
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#faf9f6]">
 
       {/* ================= HERO ================= */}
 <section className="relative -mt-[120px] z-10">
@@ -128,7 +128,7 @@ export default function HomeClient({
 
 
       {/* ================= CATEGORY ================= */}
-      <section className="py-16 px-6">
+      <section className="py-16 px-6 bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
             Shop by Category
@@ -161,7 +161,7 @@ export default function HomeClient({
 
       {/* ================= FEATURED ================= */}
       {featuredProducts.length > 0 && (
-        <section className="py-16 px-6 bg-muted/30">
+        <section className="py-16 px-6 bg-[#faf9f6]">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-10">
               <h2 className="text-3xl font-bold">Featured Products</h2>
@@ -177,10 +177,60 @@ export default function HomeClient({
             </div>
           </div>
         </section>
-      )}
+          )}
+          
+       <section className="py-20 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="grid md:grid-cols-2 gap-12 items-center">
+      
+      {/* Left Side - Logo */}
+      <div className="flex justify-center">
+        <Image
+          src="/logo3.webp"
+          alt="Kalastra Logo"
+          width={350}
+          height={350}
+          className="object-contain"
+          priority
+        />
+      </div>
+
+      {/* Right Side - Text */}
+      <div>
+        <h2 className="text-4xl font-semibold mb-6 tracking-wide">
+          The Story of Kalastra
+        </h2>
+
+        <p className="text-gray-700 leading-relaxed mb-4">
+          Kalastra Clothing embarked on its journey on October 1, 2020,
+          founded by Ms. Rachana Palav. The idea was born from a deep passion
+          for fashion and a desire to create a brand that seamlessly blends
+          style with quality.
+        </p>
+
+        <p className="text-gray-700 leading-relaxed mb-4">
+          The name Kalastra combines “Kala” (Art) and “Vastra” (Clothing),
+          symbolizing wearable art crafted with creativity and purpose.
+        </p>
+
+        <p className="text-gray-700 leading-relaxed mb-6">
+          Inspired by her mother’s dedication to stitching at home,
+          Kalastra aims to create trendsetting pieces that empower individuals
+          to embrace their personal style.
+        </p>
+
+        <p className="text-lg font-medium italic text-black">
+          “Your Satisfaction is our Motivation”
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+   
 
       {/* ================= TESTIMONIALS ================= */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6 bg-[#faf9f6]">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
             What Our Customers Say
@@ -208,7 +258,7 @@ export default function HomeClient({
 
       {/* ================= POPULAR ================= */}
       {popularProducts.length > 0 && (
-        <section className="py-16 px-6">
+        <section className="py-16 px-6 bg-white">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-10">
               <h2 className="text-3xl font-bold">Popular Products</h2>

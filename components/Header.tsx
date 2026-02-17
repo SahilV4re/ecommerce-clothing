@@ -156,7 +156,7 @@ export default function Header() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="hidden lg:flex">
                     <Avatar className="h-6 w-6">
                       <AvatarFallback className="text-xs">
                         {user.email?.charAt(0).toUpperCase()}

@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/lib/supabase/client';
-import { Star } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import Image from 'next/image';
+import React, { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/lib/supabase/client";
+import { Star } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Image from "next/image";
 
 interface Product {
   id: string;
@@ -35,25 +35,25 @@ export default function ProductDetail() {
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string>('');
-  const [selectedSize, setSelectedSize] = useState<string>('');
-  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const stickyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('id', id)
+        .from("products")
+        .select("*")
+        .eq("id", id)
         .single();
-      if (error) console.error('Error fetching product:', error);
+      if (error) console.error("Error fetching product:", error);
       else {
         setProduct(data);
         setSelectedImage(data.image_url);
-        setSelectedSize(data.available_sizes?.[0] || '');
-        setSelectedColor(data.available_colors?.[0] || '');
+        setSelectedSize(data.available_sizes?.[0] || "");
+        setSelectedColor(data.available_colors?.[0] || "");
       }
       setLoading(false);
     };
@@ -77,90 +77,95 @@ export default function ProductDetail() {
   }
 
   const additionalImages = product.additional_images || [];
-  const hasDiscount = product.original_price !== undefined && product.original_price > product.price;
+  const hasDiscount =
+    product.original_price !== undefined &&
+    product.original_price > product.price;
   const discountPercentage = hasDiscount
-    ? Math.round(((product.original_price! - product.price) / product.original_price!) * 100)
+    ? Math.round(
+        ((product.original_price! - product.price) / product.original_price!) *
+          100,
+      )
     : 0;
   // Delivery window: 5–7 days from today
-const today = new Date();
+  const today = new Date();
 
-const minDeliveryDate = new Date(today);
-minDeliveryDate.setDate(today.getDate() + 5);
+  const minDeliveryDate = new Date(today);
+  minDeliveryDate.setDate(today.getDate() + 5);
 
-const maxDeliveryDate = new Date(today);
-maxDeliveryDate.setDate(today.getDate() + 7);
+  const maxDeliveryDate = new Date(today);
+  maxDeliveryDate.setDate(today.getDate() + 7);
 
-const formatDate = (date: Date) =>
-  date.toLocaleDateString('en-IN', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'long',
-  });
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+    });
 
+  const allSizes = product.available_sizes || [];
 
-  const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  const isSizeAvailable = (size: string) => product.available_sizes?.includes(size) || false;
+  // const isSizeAvailable = (size: string) => product.available_sizes?.includes(size) || false;
 
   const handleAddToCart = async () => {
     if (!user) {
-      toast.error('Please sign in to add items to cart');
-      router.push('/auth/signin');
+      toast.error("Please sign in to add items to cart");
+      router.push("/auth/signin");
       return;
     }
 
     if (!selectedSize) {
-      toast.error('Please select a size.');
+      toast.error("Please select a size.");
       return;
     }
 
     if (product.stock <= 0) {
-      toast.error('Product is out of stock');
+      toast.error("Product is out of stock");
       return;
     }
 
     try {
       await addToCart(product.id, 1, selectedSize, selectedColor);
-      toast.success('Added to cart successfully!');
+      toast.success("Added to cart successfully!");
     } catch (error) {
-      toast.error('Failed to add to cart');
-      console.error('Cart error:', error);
+      toast.error("Failed to add to cart");
+      console.error("Cart error:", error);
     }
   };
 
   const handleBuyNow = async () => {
     if (!user) {
-      toast.error('Please sign in to proceed');
-      router.push('/auth/signin');
+      toast.error("Please sign in to proceed");
+      router.push("/auth/signin");
       return;
     }
 
     if (!selectedSize) {
-      toast.error('Please select a size.');
+      toast.error("Please select a size.");
       return;
     }
 
     if (product.stock <= 0) {
-      toast.error('Product is out of stock');
+      toast.error("Product is out of stock");
       return;
     }
 
     try {
       // Optionally add to cart before redirecting
       await addToCart(product.id, 1, selectedSize, selectedColor);
-      toast.success('Item added to cart, redirecting to checkout...');
-      router.push('/cart'); // Redirect to cart page
+      toast.success("Item added to cart, redirecting to checkout...");
+      router.push("/cart"); // Redirect to cart page
     } catch (error) {
-      toast.error('Failed to add to cart');
-      console.error('Buy Now error:', error);
+      toast.error("Failed to add to cart");
+      console.error("Buy Now error:", error);
     }
   };
 
   const colorMap: { [key: string]: string } = {
-    Black: '#000000',
-    White: '#FFFFFF',
-    Blue: '#0000FF',
-    Red: '#FF0000',
-    Green: '#00FF00',
+    Black: "#000000",
+    White: "#FFFFFF",
+    Blue: "#0000FF",
+    Red: "#FF0000",
+    Green: "#00FF00",
   };
 
   return (
@@ -224,15 +229,17 @@ const formatDate = (date: Date) =>
                   )}
                 </p>
                 <p className="text-sm text-gray-600">
-  Inclusive of all taxes | Delivery between{" "}
-  <span className="font-medium">
-    {formatDate(minDeliveryDate)} – {formatDate(maxDeliveryDate)}
-  </span>
-</p>
-
+                  Inclusive of all taxes | Delivery between{" "}
+                  <span className="font-medium">
+                    {formatDate(minDeliveryDate)} –{" "}
+                    {formatDate(maxDeliveryDate)}
+                  </span>
+                </p>
               </div>
               <p className="text-sm text-gray-600 mt-2">
-                {product.stock > 0 ? `In Stock: ${product.stock} units` : 'Out of Stock'}
+                {product.stock > 0
+                  ? `In Stock: ${product.stock} units`
+                  : "Out of Stock"}
               </p>
             </div>
 
@@ -243,34 +250,36 @@ const formatDate = (date: Date) =>
             >
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Size</label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {allSizes.map((size) => (
-                      <label key={size} className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="size"
-                          value={size}
-                          checked={selectedSize === size}
-                          onChange={(e) => setSelectedSize(e.target.value)}
-                          disabled={!isSizeAvailable(size)}
-                          className="hidden"
-                        />
-                        <span
-                          className={`w-12 h-12 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all text-lg font-semibold ${
-                            selectedSize === size
-                              ? 'border-primary bg-gradient-to-br from-primary/20 to-white text-primary'
-                              : isSizeAvailable(size)
-                              ? 'border-gray-300 hover:border-primary hover:bg-gray-100'
-                              : 'border-gray-400 bg-gray-200 line-through text-gray-500 cursor-not-allowed'
-                          }`}
-                        >
-                          {size}
-                        </span>
-                      </label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Size
+                  </label>
+
+                  <div className="flex flex-wrap gap-3">
+                    {product.available_sizes?.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`
+          min-w-[60px] h-[45px]
+          px-4
+          border
+          text-sm font-semibold
+          rounded-md
+          transition-all duration-200
+          ${
+            selectedSize === size
+              ? "border-black bg-black text-white"
+              : "border-gray-300 bg-white hover:border-black"
+          }
+        `}
+                      >
+                        {size}
+                      </button>
                     ))}
                   </div>
                 </div>
+
                 {/* <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Color</label>
                   <div className="flex gap-3 flex-wrap">
@@ -302,7 +311,7 @@ const formatDate = (date: Date) =>
                   onClick={handleAddToCart}
                   disabled={cartLoading || product.stock <= 0 || !selectedSize}
                 >
-                  {cartLoading ? 'Adding...' : 'Add to Cart'}
+                  {cartLoading ? "Adding..." : "Add to Cart"}
                 </Button>
                 <Button
                   variant="secondary"
@@ -316,14 +325,14 @@ const formatDate = (date: Date) =>
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-3">
-    Product Description
-  </h2>
-  <p className="text-sm text-gray-700 leading-relaxed">
-    {product.description || 'No description available for this product.'}
-  </p>
-</div>
-
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                Product Description
+              </h2>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {product.description ||
+                  "No description available for this product."}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -335,8 +344,13 @@ const formatDate = (date: Date) =>
           <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
             Discover other products in this category.
           </p>
-          <Button asChild className="rounded-full bg-gradient-to-r from-primary to-primary text-white hover:from-slate-700 hover:to-slate-700 px-6 py-2">
-            <Link href={`/category/${product.category.toLowerCase()}`}>Shop Category</Link>
+          <Button
+            asChild
+            className="rounded-full bg-gradient-to-r from-primary to-primary text-white hover:from-slate-700 hover:to-slate-700 px-6 py-2"
+          >
+            <Link href={`/category/${product.category.toLowerCase()}`}>
+              Shop Category
+            </Link>
           </Button>
         </section>
       </main>

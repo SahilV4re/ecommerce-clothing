@@ -1,27 +1,29 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
-const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-const COLORS = ['Black', 'White', 'Blue', 'Red', 'Green'];
+const MEN_WOMEN_SIZES = ["S", "M", "L", "XL", "XXL"];
+const KIDS_SIZES = ["22", "24", "26", "28", "30", "32", "34"];
+
+const COLORS = ["Black", "White", "Blue", "Red", "Green"];
 
 export default function NewProductPage() {
   const { user, userRole } = useAuth();
@@ -30,20 +32,20 @@ export default function NewProductPage() {
   const [images, setImages] = useState<FileList | null>(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    original_price: '',
-    category: '',
-    subcategory: '',
-    stock: '',
+    name: "",
+    description: "",
+    price: "",
+    original_price: "",
+    category: "",
+    subcategory: "",
+    stock: "",
     featured: false,
     available_sizes: [] as string[],
     available_colors: [] as string[],
   });
 
   useEffect(() => {
-    if (!user || userRole !== 'admin') router.push('/');
+    if (!user || userRole !== "admin") router.push("/");
   }, [user, userRole, router]);
 
   /* ---------------- IMAGE UPLOAD ---------------- */
@@ -51,17 +53,17 @@ export default function NewProductPage() {
     const urls: string[] = [];
 
     for (const file of Array.from(files)) {
-      const ext = file.name.split('.').pop();
+      const ext = file.name.split(".").pop();
       const fileName = `products/${crypto.randomUUID()}.${ext}`;
 
       const { error } = await supabase.storage
-        .from('product-images')
+        .from("product-images")
         .upload(fileName, file);
 
       if (error) throw error;
 
       const { data } = supabase.storage
-        .from('product-images')
+        .from("product-images")
         .getPublicUrl(fileName);
 
       urls.push(data.publicUrl);
@@ -77,19 +79,18 @@ export default function NewProductPage() {
 
     try {
       if (!images || images.length === 0) {
-        toast.error('Please upload at least one image');
+        toast.error("Please upload at least one image");
         return;
       }
 
       if (formData.available_sizes.length === 0) {
-        toast.error('Select at least one size');
+        toast.error("Select at least one size");
         return;
       }
-      
 
       const imageUrls = await uploadImages(images);
 
-      const { error } = await supabase.from('products').insert({
+      const { error } = await supabase.from("products").insert({
         name: formData.name,
         description: formData.description,
         price: Number(formData.price),
@@ -106,14 +107,28 @@ export default function NewProductPage() {
 
       if (error) throw error;
 
-      toast.success('Product added successfully');
-      router.push('/admin');
+      toast.success("Product added successfully");
+      router.push("/admin");
     } catch (err: any) {
-      toast.error(err.message || 'Failed to add product');
+      toast.error(err.message || "Failed to add product");
     } finally {
       setLoading(false);
     }
   };
+  const getSizesByCategory = () => {
+    if (formData.category === "kids") return KIDS_SIZES;
+    if (formData.category === "men" || formData.category === "women")
+      return MEN_WOMEN_SIZES;
+    return [];
+  };
+
+  useEffect(() => {
+  setFormData(prev => ({
+    ...prev,
+    available_sizes: [],
+  }));
+}, [formData.category]);
+
 
   /* ---------------- UI ---------------- */
   return (
@@ -125,24 +140,51 @@ export default function NewProductPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-
             <div>
               <Label>Product Name</Label>
-              <Input required onChange={e => setFormData({ ...formData, name: e.target.value })} />
+              <Input
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
             </div>
 
             <div>
               <Label>Description</Label>
-              <Textarea required onChange={e => setFormData({ ...formData, description: e.target.value })} />
+              <Textarea
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Input placeholder="Sale Price" type="number" required onChange={e => setFormData({ ...formData, price: e.target.value })} />
-              <Input placeholder="Original Price" type="number" required onChange={e => setFormData({ ...formData, original_price: e.target.value })} />
+              <Input
+                placeholder="Sale Price"
+                type="number"
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Original Price"
+                type="number"
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, original_price: e.target.value })
+                }
+              />
             </div>
 
-            <Select onValueChange={v => setFormData({ ...formData, category: v })}>
-              <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+            <Select
+              onValueChange={(v) => setFormData({ ...formData, category: v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="men">Men</SelectItem>
                 <SelectItem value="women">Women</SelectItem>
@@ -150,22 +192,33 @@ export default function NewProductPage() {
               </SelectContent>
             </Select>
 
-            <Input placeholder="Subcategory" required onChange={e => setFormData({ ...formData, subcategory: e.target.value })} />
+            <Input
+              placeholder="Subcategory"
+              required
+              onChange={(e) =>
+                setFormData({ ...formData, subcategory: e.target.value })
+              }
+            />
 
             {/* -------- SIZES -------- */}
             <div>
               <Label>Available Sizes</Label>
+
               <div className="flex gap-2 flex-wrap mt-2">
-                {SIZES.map(size => (
+                {getSizesByCategory().map((size) => (
                   <Button
                     type="button"
                     key={size}
-                    variant={formData.available_sizes.includes(size) ? 'default' : 'outline'}
+                    variant={
+                      formData.available_sizes.includes(size)
+                        ? "default"
+                        : "outline"
+                    }
                     onClick={() =>
-                      setFormData(prev => ({
+                      setFormData((prev) => ({
                         ...prev,
                         available_sizes: prev.available_sizes.includes(size)
-                          ? prev.available_sizes.filter(s => s !== size)
+                          ? prev.available_sizes.filter((s) => s !== size)
                           : [...prev.available_sizes, size],
                       }))
                     }
@@ -203,7 +256,12 @@ export default function NewProductPage() {
             {/* -------- IMAGES -------- */}
             <div>
               <Label>Product Images</Label>
-              <Input type="file" multiple accept="image/*" onChange={e => setImages(e.target.files)} />
+              <Input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => setImages(e.target.files)}
+              />
 
               {images && (
                 <div className="grid grid-cols-4 gap-2 mt-3">
@@ -221,15 +279,27 @@ export default function NewProductPage() {
               )}
             </div>
 
-            <Input placeholder="Stock Quantity" type="number" required onChange={e => setFormData({ ...formData, stock: e.target.value })} />
+            <Input
+              placeholder="Stock Quantity"
+              type="number"
+              required
+              onChange={(e) =>
+                setFormData({ ...formData, stock: e.target.value })
+              }
+            />
 
             <div className="flex items-center gap-2">
-              <Checkbox checked={formData.featured} onCheckedChange={v => setFormData({ ...formData, featured: Boolean(v) })} />
+              <Checkbox
+                checked={formData.featured}
+                onCheckedChange={(v) =>
+                  setFormData({ ...formData, featured: Boolean(v) })
+                }
+              />
               <Label>Featured Product</Label>
             </div>
 
             <Button disabled={loading}>
-              {loading ? 'Adding...' : 'Add Product'}
+              {loading ? "Adding..." : "Add Product"}
             </Button>
           </form>
         </CardContent>

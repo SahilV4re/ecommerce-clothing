@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 function Footer() {
   return (
@@ -8,7 +9,16 @@ function Footer() {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="text-2xl font-bold mb-4">Kalastrastyle</h3>
+              <div className='flex items-center'>
+                <Image
+                            src="/logo3.webp"
+                            alt="Kalastrastyle Logo"
+                            width={50}
+                            height={50}
+                            className="object-contain"
+                          />
+              <h3 className="text-2xl font-bold">Kalastrastyle</h3>
+              </div>
               <p className="text-muted-foreground">
                 Your destination for trendy and comfortable fashion for all ages.
               </p>
