@@ -13,6 +13,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Kalastrastyle - Premium Fashion Store',
   description: 'Discover unique styles and trendy fashion for men, women, and kids',
+  
 };
 
 export default function RootLayout({
@@ -22,6 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-site-verification" content="uVPnzBMrps7w9s83uRGI264ZZxxr_KaiClbtAftTNsI" />
+      </head>
+      
       <body className={inter.className}>
         <AuthProvider>
           <CartProvider>
