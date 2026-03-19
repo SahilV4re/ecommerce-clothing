@@ -37,7 +37,7 @@ function Footer() {
               <ul className="space-y-2 text-muted-foreground">
                 <li><Link href="/contact-us" className="hover:text-foreground">Contact Us</Link></li>
                 <li><Link href="/shipping-info" className="hover:text-foreground">Shipping Info</Link></li>
-                <li><Link href="/returns" className="hover:text-foreground">Returns</Link></li>
+                {/* <li><Link href="/returns" className="hover:text-foreground">Returns</Link></li> */}
                 <li><Link href="/size-guide" className="hover:text-foreground">Size Guide</Link></li>
               </ul>
             </div>
