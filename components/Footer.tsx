@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import IKProductImage from '@/components/IKProductImage';
 
 function Footer() {
   return (
@@ -10,8 +10,8 @@ function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className='flex items-center'>
-                <Image
-                            src="/logo3.webp"
+                <IKProductImage
+                            src="https://ik.imagekit.io/opc6rkvof/static/logo3_2OXrMtqNI.webp"
                             alt="Kalastrastyle Logo"
                             width={50}
                             height={50}

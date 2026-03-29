@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Package, MapPin, CreditCard, Calendar } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 
 interface OrderItem {
   id: string;
@@ -263,11 +263,12 @@ export default function OrderConfirmationPage() {
                 {order.order_items.map((item) => (
                   <div key={item.id} className="flex gap-3">
                     <div className="relative w-16 h-16 flex-shrink-0">
-                      <Image
+                      <IKProductImage
                         src={item.product.image_url}
                         alt={item.product.name}
                         fill
                         className="object-cover rounded-md"
+                        transformation={[{ width: "100", height: "100", quality: "75", f: "auto" }]}
                       />
                     </div>
                     <div className="flex-1 min-w-0">

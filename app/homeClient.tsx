@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,21 +29,21 @@ interface HomeClientProps {
 
 const heroSlides = [
   {
-    image: '/mens-hero.webp',
+    image: 'https://ik.imagekit.io/opc6rkvof/static/mens-hero_XZe_-Mw99.webp',
     title: 'Unleash Your Style',
     subtitle: 'Bold. Fresh. Unapologetic.',
     buttonText: 'Shop Now',
     href: '/new-collection',
   },
   {
-    image: '/mens-hero2.webp',
+    image: 'https://ik.imagekit.io/opc6rkvof/static/mens-hero2_tjzsQzGDS.webp',
     title: 'Elevate Everyday',
     subtitle: 'Trendy fits for every vibe.',
     buttonText: 'Shop Men',
     href: '/category/men',
   },
   {
-    image: '/new-collection.webp',
+    image: 'https://ik.imagekit.io/opc6rkvof/static/new-collection_PKagbZrYs.webp',
     title: 'Own the Moment',
     subtitle: 'Curated for the fearless.',
     buttonText: 'Shop Women',
@@ -52,11 +52,11 @@ const heroSlides = [
 ];
 
 const categories = [
-  { name: "Men's Fashion", href: '/category/men', image: '/mens-cat.webp' },
-  { name: "Women's Fashion", href: '/category/women', image: '/womens-cat.webp' },
-  { name: "Kids' Fashion", href: '/category/kids', image: '/kids-cat.webp' },
-  { name: 'New Collections', href: '/new-collection', image: '/new-col-cat.webp' },
-  { name: 'Special Offers', href: '/special-offers', image: '/special-cat.webp' },
+  { name: "Men's Fashion", href: '/category/men', image: 'https://ik.imagekit.io/opc6rkvof/static/mens-cat_UOAfluv9P.webp' },
+  { name: "Women's Fashion", href: '/category/women', image: 'https://ik.imagekit.io/opc6rkvof/static/womens-cat_1uJYWSo8x.webp' },
+  { name: "Kids' Fashion", href: '/category/kids', image: 'https://ik.imagekit.io/opc6rkvof/static/kids-cat_aEIHryoL0.webp' },
+  { name: 'New Collections', href: '/new-collection', image: 'https://ik.imagekit.io/opc6rkvof/static/new-col-cat_ipFqffCpN.webp' },
+  { name: 'Special Offers', href: '/special-offers', image: 'https://ik.imagekit.io/opc6rkvof/static/special-cat_DE4m87HHV.webp' },
 ];
 
 const testimonials = [
@@ -94,13 +94,14 @@ export default function HomeClient({
         
         {/* Image Wrapper */}
         <div className="relative w-full h-[110vh]">
-          <Image
+          <IKProductImage
             src={slide.image}
             alt={slide.title}
             fill
             priority={index === 0}
             sizes="100vw"
             className="object-cover"
+            transformation={[{ quality: "80", f: "auto" }]}
           />
         </div>
 
@@ -140,12 +141,13 @@ export default function HomeClient({
                 <Card className="overflow-hidden hover:shadow-lg transition">
                   <CardContent className="p-4">
                     <div className="relative w-full h-32 mb-4">
-                      <Image
+                      <IKProductImage
                         src={category.image}
                         alt={category.name}
                         fill
                         sizes="(max-width:768px) 50vw, 20vw"
                         className="object-cover rounded-md"
+                        transformation={[{ width: "300", height: "200", quality: "80", f: "auto" }]}
                       />
                     </div>
                     <h3 className="text-center font-medium">
@@ -185,8 +187,8 @@ export default function HomeClient({
       
       {/* Left Side - Logo */}
       <div className="flex justify-center">
-        <Image
-          src="/logo3.webp"
+        <IKProductImage
+          src="https://ik.imagekit.io/opc6rkvof/static/logo3_2OXrMtqNI.webp"
           alt="Kalastra Logo"
           width={350}
           height={350}

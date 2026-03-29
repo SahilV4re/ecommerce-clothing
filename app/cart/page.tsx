@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -80,11 +80,12 @@ const totalAmount = subtotal + shippingCost;
               <CardContent className="p-6">
                 <div className="flex gap-4">
                   <div className="relative w-24 h-24 flex-shrink-0">
-                    <Image
+                    <IKProductImage
                       src={item.product.image_url}
                       alt={item.product.name}
                       fill
                       className="object-cover rounded-md"
+                      transformation={[{ width: "150", height: "150", quality: "75", f: "auto" }]}
                     />
                   </div>
                   

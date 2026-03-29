@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard'; // Import the ProductCard component
 import { useCart } from '@/contexts/CartContext';
@@ -110,13 +110,14 @@ export default function NewCollectionsPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <Image
-            src="/hero.jpg"
+          <IKProductImage
+            src="https://ik.imagekit.io/opc6rkvof/static/hero_XCv3PxOmS.jpg"
             alt="New Collection"
             width={400}
             height={400}
             className="object-cover md:object-fit rounded-lg w-full h-auto md:h-96"
             priority
+            transformation={[{ width: "600", height: "600", quality: "80", f: "auto" }]}
           />
         </motion.div>
         <div className="absolute inset-0 bg-black/30 z-0" />

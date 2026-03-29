@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import IKProductImage from "@/components/IKProductImage";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,8 +56,8 @@ export default function Header() {
         <div className="flex items-center justify-between gap-1">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1">
-            <Image
-              src="/logo3.webp"
+            <IKProductImage
+              src="https://ik.imagekit.io/opc6rkvof/static/logo3_2OXrMtqNI.webp"
               alt="Kalastrastyle Logo"
               width={70}
               height={70}

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { upload } from "@imagekit/next";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,25 +49,27 @@ export default function NewProductPage() {
     if (!user || userRole !== "admin") router.push("/");
   }, [user, userRole, router]);
 
-  /* ---------------- IMAGE UPLOAD ---------------- */
+  /* ---------------- IMAGE UPLOAD (ImageKit) ---------------- */
+  const authenticator = async () => {
+    const res = await fetch("/api/imagekit-auth");
+    if (!res.ok) throw new Error("Failed to get ImageKit auth");
+    return res.json();
+  };
+
   const uploadImages = async (files: FileList) => {
     const urls: string[] = [];
 
     for (const file of Array.from(files)) {
-      const ext = file.name.split(".").pop();
-      const fileName = `products/${crypto.randomUUID()}.${ext}`;
+      const authParams = await authenticator();
+      const result = await upload({
+        file,
+        fileName: `product-${crypto.randomUUID()}`,
+        folder: "/products",
+        ...authParams,
+      });
 
-      const { error } = await supabase.storage
-        .from("product-images")
-        .upload(fileName, file);
-
-      if (error) throw error;
-
-      const { data } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(fileName);
-
-      urls.push(data.publicUrl);
+      if (!result?.url) throw new Error("Upload failed");
+      urls.push(result.url);
     }
 
     return urls;

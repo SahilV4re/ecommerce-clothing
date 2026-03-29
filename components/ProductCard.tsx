@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -66,12 +66,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Card className="group hover:shadow-lg transition-shadow duration-300">
         <CardContent className="p-4">
           <div className="relative mb-4 overflow-hidden rounded-lg">
-            <Image
+            <IKProductImage
               src={product.image_url}
               alt={product.name}
               width={300}
               height={300}
               className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+              transformation={[{ width: "400", height: "400", quality: "80", f: "auto" }]}
             />
             {discountPercentage > 0 && (
               <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">

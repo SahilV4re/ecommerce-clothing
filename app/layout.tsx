@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import CookieConsent from '@/components/CookieConsent';
+import { ImageKitProvider } from '@imagekit/next';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -28,18 +29,20 @@ export default function RootLayout({
       </head>
       
       <body className={inter.className}>
-        <AuthProvider>
-          <CartProvider>
-            <Header />
-            <main>
-              {children}
-              <CookieConsent />
-            </main>
-            
-            <Toaster />
-            <Footer />
-          </CartProvider>
-        </AuthProvider>
+        <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || 'https://ik.imagekit.io/opc6rkvof'}>
+          <AuthProvider>
+            <CartProvider>
+              <Header />
+              <main>
+                {children}
+                <CookieConsent />
+              </main>
+              
+              <Toaster />
+              <Footer />
+            </CartProvider>
+          </AuthProvider>
+        </ImageKitProvider>
       </body>
     </html>
   );

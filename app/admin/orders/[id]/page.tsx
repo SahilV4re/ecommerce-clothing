@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 import { ArrowLeft, Package, MapPin, CreditCard, User, Calendar, Phone } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 import { toast } from 'sonner';
 
 interface OrderItem {
@@ -318,11 +318,12 @@ const shippingCharge = subtotal < 500 ? 99 : 0;
                 {order.order_items.map((item) => (
                   <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
                     <div className="relative w-16 h-16 flex-shrink-0">
-                      <Image
+                      <IKProductImage
                         src={item.products.image_url}
                         alt={item.products.name}
                         fill
                         className="object-cover rounded-md"
+                        transformation={[{ width: "100", height: "100", quality: "75", f: "auto" }]}
                       />
                     </div>
                     <div className="flex-1 min-w-0">

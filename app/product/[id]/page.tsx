@@ -11,7 +11,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Image from "next/image";
+import IKProductImage from "@/components/IKProductImage";
 
 interface Product {
   id: string;
@@ -127,7 +127,11 @@ export default function ProductDetail() {
       await addToCart(product.id, 1, selectedSize, selectedColor);
       toast.success("Added to cart successfully!");
     } catch (error) {
-      toast.error("Failed to add to cart");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to add to cart");
+      }
       console.error("Cart error:", error);
     }
   };
@@ -155,7 +159,11 @@ export default function ProductDetail() {
       toast.success("Item added to cart, redirecting to checkout...");
       router.push("/cart"); // Redirect to cart page
     } catch (error) {
-      toast.error("Failed to add to cart");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to add to cart");
+      }
       console.error("Buy Now error:", error);
     }
   };
@@ -175,12 +183,13 @@ export default function ProductDetail() {
           {/* Image Gallery */}
           <div className="space-y-6">
             <div className="w-full h-[500px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-              <Image
+              <IKProductImage
                 src={selectedImage}
                 alt={product.name}
-                width={256}
-                height={256}
+                width={600}
+                height={600}
                 className="w-full h-full object-contain p-4 transition-transform hover:scale-105"
+                transformation={[{ width: "800", height: "800", quality: "85", f: "auto" }]}
               />
             </div>
             <div className="grid grid-cols-5 gap-4">
@@ -190,12 +199,13 @@ export default function ProductDetail() {
                   onClick={() => setSelectedImage(img)}
                   className="w-full h-24 bg-gray-100 rounded-lg overflow-hidden hover:border-2 hover:border-primary transition-all shadow-md hover:shadow-lg"
                 >
-                  <Image
+                  <IKProductImage
                     src={img}
                     alt={`${product.name} thumbnail ${index + 1}`}
-                    width={256}
-                    height={256}
+                    width={120}
+                    height={120}
                     className="w-full h-full object-contain p-2 transition-opacity hover:opacity-90"
+                    transformation={[{ width: "150", height: "150", quality: "75", f: "auto" }]}
                   />
                 </button>
               ))}

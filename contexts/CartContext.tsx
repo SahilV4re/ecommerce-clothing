@@ -117,6 +117,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      // Clamp quantity to max stock
+      const item = items.find((i) => i.id === itemId);
+      if (item && quantity > item.product.stock) {
+        quantity = item.product.stock;
+      }
+
       const { error } = await supabase
         .from('cart_items')
         .update({ quantity })
@@ -133,7 +139,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         )
       );
     },
-    [removeFromCart]
+    [removeFromCart, items]
   );
 
 
@@ -157,7 +163,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (existingItem) {
-        await updateQuantity(existingItem.id, existingItem.quantity + quantity);
+        const newQty = existingItem.quantity + quantity;
+        if (newQty > existingItem.product.stock) {
+          throw new Error(
+            `Only ${existingItem.product.stock} units available. You already have ${existingItem.quantity} in your cart.`
+          );
+        }
+        await updateQuantity(existingItem.id, newQty);
         return;
       }
 

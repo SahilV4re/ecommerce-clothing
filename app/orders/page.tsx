@@ -9,7 +9,7 @@ import { ShoppingBag, Package, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import IKProductImage from '@/components/IKProductImage';
 
 interface OrderItem {
   id: string;
@@ -183,11 +183,12 @@ export default function OrdersPage() {
                   {order.order_items.slice(0, 3).map((item) => (
                     <div key={item.id} className="flex-shrink-0 flex items-center gap-3 min-w-[200px]">
                       <div className="relative w-12 h-12">
-                        <Image
+                        <IKProductImage
                           src={item.product.image_url}
                           alt={item.product.name}
                           fill
                           className="object-cover rounded-md"
+                          transformation={[{ width: "80", height: "80", quality: "75", f: "auto" }]}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
