@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Search, Filter } from 'lucide-react';
+import { SUBCATEGORIES } from '@/lib/constants';
 
 interface Product {
   id: string;
@@ -43,6 +44,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [priceRange, setPriceRange] = useState('all');
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
 
   const categoryNames = {
     men: "Men's Fashion",
@@ -51,12 +53,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   };
 
   useEffect(() => {
+    setSelectedSubcategory('all');
     fetchProducts();
   }, [params.category]);
 
   useEffect(() => {
     filterAndSortProducts();
-  }, [products, searchQuery, sortBy, priceRange]);
+  }, [products, searchQuery, sortBy, priceRange, selectedSubcategory]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -77,6 +80,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
   const filterAndSortProducts = () => {
     let filtered = [...products];
+
+    // Subcategory filter
+    if (selectedSubcategory !== 'all') {
+      filtered = filtered.filter(product => product.subcategory === selectedSubcategory);
+    }
 
     // Search filter
     if (searchQuery) {
@@ -152,6 +160,29 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           Discover our latest collection of {params.category} fashion
         </p>
       </div>
+
+      {/* Subcategory Pills */}
+      {SUBCATEGORIES[params.category.toLowerCase()] && (
+        <div className="mb-8 flex flex-wrap gap-2">
+          <Button
+            variant={selectedSubcategory === 'all' ? 'default' : 'outline'}
+            onClick={() => setSelectedSubcategory('all')}
+            className="rounded-full"
+          >
+            All
+          </Button>
+          {SUBCATEGORIES[params.category.toLowerCase()].map((sub) => (
+            <Button
+              key={sub}
+              variant={selectedSubcategory === sub ? 'default' : 'outline'}
+              onClick={() => setSelectedSubcategory(sub)}
+              className="rounded-full"
+            >
+              {sub}
+            </Button>
+          ))}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="mb-8 space-y-4">

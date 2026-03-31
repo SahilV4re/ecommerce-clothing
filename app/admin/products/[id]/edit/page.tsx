@@ -23,6 +23,7 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import IKProductImage from "@/components/IKProductImage";
+import { SUBCATEGORIES } from "@/lib/constants";
 
 const MEN_WOMEN_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KIDS_SIZES = ["22", "24", "26", "28", "30", "32", "34"];
@@ -262,7 +263,7 @@ export default function EditProductPage() {
             <Select
               value={formData.category}
               onValueChange={(v) =>
-                setFormData({ ...formData, category: v, available_sizes: [] })
+                setFormData({ ...formData, category: v, available_sizes: [], subcategory: "" })
               }
             >
               <SelectTrigger>
@@ -277,13 +278,29 @@ export default function EditProductPage() {
 
             <div>
               <Label>Subcategory</Label>
-              <Input
-                required
-                value={formData.subcategory}
-                onChange={(e) =>
-                  setFormData({ ...formData, subcategory: e.target.value })
-                }
-              />
+              {formData.category ? (
+                <Select
+                  value={formData.subcategory}
+                  onValueChange={(v) => setFormData({ ...formData, subcategory: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Subcategory" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUBCATEGORIES[formData.category]?.map((sub) => (
+                      <SelectItem key={sub} value={sub}>
+                        {sub}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Select disabled>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category First" />
+                  </SelectTrigger>
+                </Select>
+              )}
             </div>
 
             {/* -------- SIZES -------- */}

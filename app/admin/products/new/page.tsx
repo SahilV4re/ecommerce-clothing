@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { SUBCATEGORIES } from "@/lib/constants";
 
 const MEN_WOMEN_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KIDS_SIZES = ["22", "24", "26", "28", "30", "32", "34"];
@@ -128,11 +129,12 @@ export default function NewProductPage() {
   };
 
   useEffect(() => {
-  setFormData(prev => ({
-    ...prev,
-    available_sizes: [],
-  }));
-}, [formData.category]);
+    setFormData(prev => ({
+      ...prev,
+      available_sizes: [],
+      subcategory: "",
+    }));
+  }, [formData.category]);
 
 
   /* ---------------- UI ---------------- */
@@ -185,6 +187,7 @@ export default function NewProductPage() {
             </div>
 
             <Select
+              value={formData.category}
               onValueChange={(v) => setFormData({ ...formData, category: v })}
             >
               <SelectTrigger>
@@ -197,13 +200,29 @@ export default function NewProductPage() {
               </SelectContent>
             </Select>
 
-            <Input
-              placeholder="Subcategory"
-              required
-              onChange={(e) =>
-                setFormData({ ...formData, subcategory: e.target.value })
-              }
-            />
+            {formData.category ? (
+              <Select
+                value={formData.subcategory}
+                onValueChange={(v) => setFormData({ ...formData, subcategory: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Subcategory" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SUBCATEGORIES[formData.category]?.map((sub) => (
+                    <SelectItem key={sub} value={sub}>
+                      {sub}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Select disabled>
+                <SelectTrigger>
+                  <SelectValue placeholder="Subcategory (Select Category First)" />
+                </SelectTrigger>
+              </Select>
+            )}
 
             {/* -------- SIZES -------- */}
             <div>
