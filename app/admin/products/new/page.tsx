@@ -65,6 +65,8 @@ export default function NewProductPage() {
         file,
         fileName: `product-${crypto.randomUUID()}`,
         folder: "/products",
+        publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
+        urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || 'https://ik.imagekit.io/opc6rkvof',
         ...authParams,
       });
 

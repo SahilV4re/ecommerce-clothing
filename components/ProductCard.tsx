@@ -62,9 +62,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   // };
 
   return (
-    <Link href={`/product/${product.id}`} className="block">
-      <Card className="group hover:shadow-lg transition-shadow duration-300">
-        <CardContent className="p-4">
+    <Link href={`/product/${product.id}`} className="block group">
+      <div className="flex flex-col h-full bg-transparent border-none shadow-none">
+        <div className="p-0">
           <div className="relative mb-4 overflow-hidden rounded-lg">
             <IKProductImage
               src={product.image_url}
@@ -124,8 +124,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   {product.stock <= 0 ? 'Out of Stock' : 'View Product'}
 </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 }

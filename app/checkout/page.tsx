@@ -1,19 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ShoppingBag, MapPin, CreditCard, Truck } from 'lucide-react';
+import { ShoppingBag, MapPin, CreditCard, Truck, AlertTriangle } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import IKProductImage from '@/components/IKProductImage';
 
@@ -32,6 +30,7 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const orderPlacedRef = useRef(false);
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
@@ -49,7 +48,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (items.length === 0) {
+    if (items.length === 0 && !orderPlacedRef.current) {
       router.push('/cart');
       return;
     }
@@ -68,15 +67,37 @@ export default function CheckoutPage() {
       }
     }
 
-    // Validate phone number (basic validation)
     if (!/^\d{10}$/.test(shippingAddress.phone)) {
       toast.error('Please enter a valid 10-digit phone number');
       return false;
     }
 
-    // Validate pincode (basic validation)
     if (!/^\d{6}$/.test(shippingAddress.pincode)) {
       toast.error('Please enter a valid 6-digit pincode');
+      return false;
+    }
+
+    // Check if any item is out of stock
+    const outOfStockItems = items.filter((item) => item.product.stock <= 0);
+    if (outOfStockItems.length > 0) {
+      toast.error(
+        `Cannot order out-of-stock items: ${outOfStockItems
+          .map((i) => i.product.name)
+          .join(', ')}`
+      );
+      return false;
+    }
+
+    // Check if any item quantity exceeds stock
+    const overStockItems = items.filter(
+      (item) => item.quantity > item.product.stock
+    );
+    if (overStockItems.length > 0) {
+      toast.error(
+        `Quantity exceeds available stock for: ${overStockItems
+          .map((i) => `${i.product.name} (available: ${i.product.stock})`)
+          .join(', ')}`
+      );
       return false;
     }
 
@@ -89,45 +110,55 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user!.id,
-          total_amount: getCartTotal(),
-          status: 'pending',
+      const subtotal = getCartTotal();
+      const shippingCost = subtotal >= 500 ? 0 : 99;
+      const total = subtotal + shippingCost;
+
+      // Use the atomic checkout API
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+            price_at_purchase: item.product.price,
+            size: item.size,
+            color: item.color,
+          })),
           shipping_address: shippingAddress,
           payment_method: paymentMethod,
-        })
-        .select()
-        .single();
+          total_amount: total,
+        }),
+      });
 
-      if (orderError) throw orderError;
+      const data = await res.json();
 
-      // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price_at_purchase: item.product.price,
-        size: item.size,
-        color: item.color,
-      }));
+      if (!res.ok) {
+        if (res.status === 409) {
+          // Stock conflict — items no longer available
+          toast.error(data.error, {
+            duration: 5000,
+            icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
+          });
+          // Refresh cart to get updated stock
+          router.push('/cart');
+          return;
+        }
+        throw new Error(data.error || 'Failed to place order');
+      }
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      // Mark order as placed BEFORE clearing cart to prevent redirect to /cart
+      orderPlacedRef.current = true;
 
-      if (itemsError) throw itemsError;
-
-      // Clear cart
+      // Cart is cleared server-side, sync local state
       await clearCart();
 
       toast.success('Order placed successfully!');
-      router.push(`/order-confirmation/${order.id}`);
+      router.push(`/order-confirmation/${data.orderId}`);
     } catch (error: any) {
       console.error('Error placing order:', error);
-      toast.error('Failed to place order. Please try again.');
+      toast.error(error.message || 'Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -290,12 +321,21 @@ export default function CheckoutPage() {
                       </h4>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         {item.size && <Badge variant="outline">{item.size}</Badge>}
-                        {/* {item.color && <Badge variant="outline">{item.color}</Badge>} */}
                         <span>Qty: {item.quantity}</span>
                       </div>
                       <p className="font-semibold text-sm">
                         ₹{item.product.price * item.quantity}
                       </p>
+                      {item.product.stock <= 0 && (
+                        <p className="text-xs text-red-500 font-medium">
+                          Out of Stock
+                        </p>
+                      )}
+                      {item.quantity > item.product.stock && item.product.stock > 0 && (
+                        <p className="text-xs text-orange-500 font-medium">
+                          Only {item.product.stock} available
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -333,10 +373,16 @@ export default function CheckoutPage() {
                 className="w-full"
                 size="lg"
                 onClick={handlePlaceOrder}
-                disabled={loading}
+                disabled={loading || items.some((i) => i.product.stock <= 0)}
               >
                 {loading ? 'Placing Order...' : 'Place Order'}
               </Button>
+
+              {items.some((i) => i.product.stock <= 0) && (
+                <p className="text-xs text-red-500 text-center">
+                  Remove out-of-stock items before placing your order.
+                </p>
+              )}
 
               <p className="text-xs text-muted-foreground text-center">
                 By placing your order, you agree to our Terms of Service and Privacy Policy.

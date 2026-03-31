@@ -125,7 +125,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="animate-pulse">
               <div className="bg-muted rounded-lg h-48 mb-4"></div>
@@ -208,7 +208,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <div className="mb-4 text-sm text-muted-foreground">
             Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

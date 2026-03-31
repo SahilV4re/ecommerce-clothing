@@ -25,6 +25,42 @@ export type Database = {
         }
       }
 
+      hero_slides: {
+        Row: {
+          id: string
+          image_url: string
+          title: string
+          subtitle: string | null
+          button_text: string
+          button_link: string
+          sort_order: number
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          image_url: string
+          title: string
+          subtitle?: string | null
+          button_text?: string
+          button_link?: string
+          sort_order?: number
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          image_url?: string
+          title?: string
+          subtitle?: string | null
+          button_text?: string
+          button_link?: string
+          sort_order?: number
+          is_active?: boolean
+          created_at?: string
+        }
+      }
+
       products: {
         Row: {
           id: string

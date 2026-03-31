@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabase/client";
-import { Star } from "lucide-react";
+import { Star, Plus, Minus } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -38,6 +38,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const stickyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -316,33 +317,49 @@ export default function ProductDetail() {
                     )) || <p className="text-sm text-gray-500">No colors available</p>}
                   </div>
                 </div> */}
-                <Button
-                  className="w-full rounded-full bg-green-600 text-white hover:bg-green-700 transition-colors"
-                  onClick={handleAddToCart}
-                  disabled={cartLoading || product.stock <= 0 || !selectedSize}
-                >
-                  {cartLoading ? "Adding..." : "Add to Cart"}
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                  onClick={handleBuyNow}
-                  disabled={product.stock <= 0 || !selectedSize}
-                >
-                  Buy Now
-                </Button>
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    className="w-full h-[45px] rounded-sm bg-white text-black border-2 border-black hover:border-black hover:bg-gray-50 transition-colors font-semibold shadow-sm"
+                    onClick={handleAddToCart}
+                    disabled={cartLoading || product.stock <= 0 || !selectedSize}
+                  >
+                    {cartLoading ? "Adding..." : "Add to Cart"}
+                  </Button>
+                  <Button
+                    className="w-full h-[45px] rounded-sm bg-black text-white hover:bg-gray-800 transition-colors font-semibold shadow-sm"
+                    onClick={handleBuyNow}
+                    disabled={product.stock <= 0 || !selectedSize}
+                  >
+                    Buy Now
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
-                Product Description
-              </h2>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {product.description ||
-                  "No description available for this product."}
-              </p>
-            </div>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+              <button
+                className="w-full p-6 flex items-center justify-between text-left focus:outline-none"
+                onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+              >
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Product Description
+                </h2>
+                <div className="text-black bg-transparent p-1.5 rounded-full">
+                  {isDescriptionExpanded ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                </div>
+              </button>
+              
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out px-6 ${
+                  isDescriptionExpanded ? "max-h-[500px] opacity-100 pb-6" : "max-h-0 opacity-0 pb-0"
+                }`}
+              >
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {product.description ||
+                    "No description available for this product."}
+                </p>
+            
           </div>
         </div>
 
@@ -362,8 +379,11 @@ export default function ProductDetail() {
               Shop Category
             </Link>
           </Button>
-        </section>
+          </section>
+          </div>
+          </div>
       </main>
+      
     </div>
   );
 }
