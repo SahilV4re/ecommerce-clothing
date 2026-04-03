@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (stockError) {
+    console.error('STOCK ERROR FULL:', JSON.stringify(stockError, null, 2));
     // Parse the error message for user-friendly feedback
     const message = stockError.message || 'Failed to reserve stock';
 
